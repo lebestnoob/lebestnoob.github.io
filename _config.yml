@@ -10,6 +10,7 @@ relative_links:
   collections: true
 
 include:
+  - index.md
 
   - CONTRIBUTING.md
 
@@ -27,4 +28,4 @@ include:
 
   - PULL_REQUEST_TEMPLATE.md
 
-remote_theme: pmarsceill/just-the-docs
+remote_theme: riggraz/no-style-please
