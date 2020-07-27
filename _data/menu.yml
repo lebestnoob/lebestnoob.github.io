@@ -12,14 +12,6 @@ entries:
       - title: used by riggraz.dev
         url: https://riggraz.dev/
 
-  - title: thoughts
-    post_list: true
-    url: false
-    entries: false
-
-  - title: rss
-    url: feed.xml
-  
   - title: another list
     url: false
     entries:
