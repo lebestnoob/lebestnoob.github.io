@@ -1,6 +1,6 @@
 ---
 title: Welcome to Github Pages
-style: post
+layout: post
 ---
 
 You can use the [editor on GitHub](https://github.com/Lebestboob/lebestboob.github.io/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
