@@ -1,1 +1,3 @@
-line of text
+---
+layout: home
+---
