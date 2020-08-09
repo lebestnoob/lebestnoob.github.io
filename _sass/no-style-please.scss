@@ -1,6 +1,6 @@
 html {
-  color: white;
-  background-color: gray;
+  color: black;
+  background-color: white;
   font-family: monospace;
   font-size: 1.3rem;
   line-height: 1.3;
@@ -55,4 +55,8 @@ blockquote {
   padding: 1rem;
  
   p { margin: 0; }
+}
+.dark-mode {
+  background-color: black;
+  color: white;
 }
