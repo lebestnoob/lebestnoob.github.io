@@ -3,6 +3,18 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
+input {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+}
 
 body {
   padding: 25px;
@@ -28,6 +40,7 @@ body {
 function myFunction() {
    var element = document.body;
    element.classList.toggle("dark-mode");
+var this = document.getElementById("myButton1");
 if (this.value=="Toggle white mode") this.value = "Toggle dark mode";
     else this.value = "Toggle white mode";
 }
