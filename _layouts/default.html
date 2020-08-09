@@ -20,5 +20,12 @@ text-shadow: 2px 1px 4px rgba(0,0,0,0.25);}
     {% if site.goat_counter and jekyll.environment == "production" %}
         {% include goat_counter.html %}
     {% endif %}
+<button onclick="myFunction()">Toggle dark mode</button>
+
+<script>
+function myFunction() {
+   var element = document.body;
+   element.classList.toggle("dark-mode");
+}
     </body>
 </html>
