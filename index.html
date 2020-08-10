@@ -3,48 +3,35 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-input {
-  background-color: #4CAF50;
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
+html {
+background-color: var(—background-color);
+—light-text-color: rgb(72, 72, 74);
+  	—link-color: rgb(0, 112, 201);
+  	—main-background-color: rgb(255, 255, 255);
+  	—main-text-color: rgb(51, 51, 51);
+}
+
+@media (prefers-color-scheme: dark) {
+	html {
+		—light-text-color: rgb(199, 199, 204);
+  		—link-color: rgb( 100, 210, 255);
+  		—main-background-color: rgb(28, 28, 30);
+  		—main-text-color: rgb(229, 229, 234);
+	}
 }
 
 body {
   padding: 25px;
-  background-color: white;
-  color: black;
   font-size: 25px;
 }
 
-.dark-mode {
-  background-color: black;
-  color: white;
-}
 </style>
 </head>
 <body>
 
 <h2>Toggle Dark/Light Mode</h2>
-<p>Click the button to toggle between dark and light mode for this page.</p>
+<p> Toggle between dark and light mode for this page.</p>
  <a href="site.html">Other site</a> 
-<input onclick="myFunction()" type="button" value="Toggle dark mode" id="myButton1"></input>
-
-<script>
-function myFunction() {
-   var element = document.body;
-   element.classList.toggle("dark-mode");
-var elem = document.getElementById("myButton1");
-if (elem.value=="Toggle light mode") elem.value = "Toggle dark mode";
-    else elem.value = "Toggle light mode";
-}
-</script>
 
 </body>
 </html>
