@@ -16,6 +16,14 @@ body {
 }
 </style>
 </head>
+<script>
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      var element = document.body;
+  element.classList.toggle("dark-mode");
+}
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    const newColorScheme = e.matches ? "dark" : "light";
+});
 <body>
 
 <h2>Toggle Dark/Light Mode</h2>
