@@ -1,53 +1,47 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-html, html[data-theme=“light”] { 
-	—light-text-color: rgb(72, 72, 74);
-  	—link-color: rgb(0, 112, 201);
-  	—main-background-color: rgb(255, 255, 255);
-  	—main-text-color: rgb(51, 51, 51);
+body {
+  padding: 25px;
+  background-color: white;
+  color: black;
+  font-size: 25px;
 }
 
-html[data-theme=“dark”] {
-		—light-text-color: rgb(199, 199, 204);
-  		—link-color: rgb( 100, 210, 255);
-  		—main-background-color: rgb(28, 28, 30);
-  		—main-text-color: rgb(229, 229, 234);
-	}
-
-@media (prefers-color-scheme: dark) {
-	html, html[data-theme=“dark”] {
-		—light-text-color: rgb(199, 199, 204);
-  		—link-color: rgb( 100, 210, 255);
-  		—main-background-color: rgb(28, 28, 30);
-  		—main-text-color: rgb(229, 229, 234);
-	}
-	
-	html[data-theme=“light”] { 
-	—light-text-color: rgb(72, 72, 74);
-  	—link-color: rgb(0, 112, 201);
-  	—main-background-color: rgb(255, 255, 255);
-  	—main-text-color: rgb(51, 51, 51);
-	}
+.dark-mode {
+  background-color: black;
+  color: white;
 }
 </style>
 </head>
 <body>
 
-<h2>Light Mode</h2>
- <a href="index.html">Visit</a> 
+<h2>Toggle Dark/Light Mode</h2>
+<a href="index.html">Visit W3Schools.com!</a>
+<p>Click the button to toggle between dark and light mode for this page.</p>
 
-<input onclick="myFunction()" type="button" value="Toggle dark mode" id="myButton1"></input>
+<button type="button" onclick="themeToggle()">Theme Toggle</button>
+<div id="theme"></div>
 
 <script>
-function myFunction() {
-   var element = document.body;
-   element.classList.toggle("dark-mode");
-var elem = document.getElementById("myButton1");
-if (elem.value=="Toggle light mode") elem.value = "Toggle dark mode";
-    else elem.value = "Toggle light mode";
+// On page load set the theme.
+(function() {
+  let onpageLoad = localStorage.getItem("theme") || "";
+  let element = document.body;
+  element.classList.add(onpageLoad);
+  document.getElementById("theme").textContent =
+    localStorage.getItem("theme") || "light";
+})();
+
+function themeToggle() {
+  let element = document.body;
+  element.classList.toggle("dark-mode");
+
+  let theme = localStorage.getItem("theme");
+  if (theme && theme === "dark-mode") {
+    localStorage.setItem("theme", "");
+  } else {
+    localStorage.setItem("theme", "dark-mode");
+  }
+
+  document.getElementById("theme").textContent = localStorage.getItem("theme");
 }
 </script>
 
