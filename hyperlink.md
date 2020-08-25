@@ -1,12 +1,12 @@
 
 # Hello World!
 
-## This is a hyperlink text using markdown links. 
+## At the bottom of the page, there is a hyperlink using the markdown style
 
-### This is how they look like
+### This is how they you make them
 
 `[Name](site)`
 
-#### Below is a hyperlink in this format that send you to the homepage
+#### The hyperlink below is in this format
 
-##### Take me [home](/index.html)
+##### Take me to [index.html](/index)
