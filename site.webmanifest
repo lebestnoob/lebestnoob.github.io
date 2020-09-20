@@ -1,7 +1,7 @@
 {
     "name": "KimCartoon",
     "short_name": "KimCartoon",
- "description": "A simply readable Hacker News app.",
+ "description": "Watch cartoons online in high quality. Free download high quality cartoons. Various formats from 240p to 720p HD (or even 1080p). HTML5 available for mobile devices",
     "icons": [
         {
             "src": "/android-chrome-48x48.png",
@@ -11,5 +11,5 @@
     ],
     "theme_color": "#fdf082",
     "background_color": "#fdf082",
-    "display": "minimal-ui"
+    "display": "standalone"
 }
