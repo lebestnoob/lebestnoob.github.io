@@ -1,27 +1,35 @@
- body {
-     font-family: 'Open Sans', sans-serif;
-     margin-top: 2em;
-     margin-bottom: 4em;
-     padding-left: 30px;
-     padding-right: 30px;
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    margin-top: 2em;
+    margin-bottom: 4em;
+    padding-left: 30px;
+    padding-right: 30px;
 }
- a {
-     outline: none;
-     text-decoration: none;
+
+a {
+    outline: none;
+    text-decoration: none;
 }
- a:link {
-     color: #6495ED;
+
+a:link {
+    color: #6495ED;
 }
- a:visited {
-     color: #6495ED;
+
+a:visited {
+    color: #6495ED;
 }
- a:focus {
-     color: #6495ED;
+
+a:focus {
+    color: #6495ED;
 }
- a:hover {
-     text-decoration: underline;
-     color: #6495ED;
+
+a:hover {
+    text-decoration: underline;
+    color: #6495ED;
 }
- a:active {
-     color: #6495ED;
+
+a:active {
+    color: #6495ED;
 }
