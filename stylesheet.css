@@ -2,10 +2,12 @@
 
 body {
     font-family: 'Open Sans', sans-serif;
-    margin-top: 2em;
-    margin-bottom: 4em;
+    margin: 0;
+    height: 100vh;
     padding-left: 30px;
     padding-right: 30px;
+    display: flex; 
+    flex-direction: column; 
 }
 
 a {
@@ -32,4 +34,29 @@ a:hover {
 
 a:active {
     color: #6495ED;
+}
+
+a.header {
+    color: black;
+    cursor: not-allowed;
+}
+
+header { 
+    margin-top: 1.5em;
+    min-height: 50px;
+}
+
+footer {
+    min-height: 50px;
+    margin-top: auto; 
+}
+h1 {
+    margin: 0;
+}
+.right {
+    float: right;
+}
+
+.left {
+    float: left;
 }
