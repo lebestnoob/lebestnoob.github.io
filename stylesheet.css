@@ -50,9 +50,15 @@ footer {
     min-height: 50px;
     margin-top: auto; 
 }
+
 h1 {
     margin: 0;
 }
+
+hr {
+    background-color: #202131;
+}
+
 .right {
     float: right;
 }
