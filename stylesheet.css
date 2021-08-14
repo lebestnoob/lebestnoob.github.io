@@ -55,9 +55,9 @@ h1 {
 }
 
 hr {
-    height: 0.2px;
+    height: 1px;
     background-color: #202131;
-    border: 0.2px #202131;
+    border: 1px #202131;
 }
 
 .right {
