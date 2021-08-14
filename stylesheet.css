@@ -86,4 +86,5 @@ img.emoji {
     hovering, clicking etc. Makes it feel like its actual text.
     */
     pointer-events: none;
+    cursor: text;
 }
