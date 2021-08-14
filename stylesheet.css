@@ -40,7 +40,7 @@ a.header {
 }
 
 header {
-    margin-top: 1.5em;
+    margin-top: 15px;
     min-height: 50px;
 }
 
@@ -57,6 +57,7 @@ h1 {
 hr {
     height: 0.2px;
     background-color: #202131;
+    border: 0.2px #202131;
 }
 
 .right {
@@ -68,11 +69,12 @@ hr {
 }
 
 .center {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     text-align: center;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    min-height: 75vh;
 }
 
 img.emoji {
