@@ -1,0 +1,3 @@
+User-agent: *
+Disallow: 
+Sitemap: https://lebestnoob.github.io/sitemap.xml
