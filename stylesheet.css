@@ -10,6 +10,8 @@ body {
     overflow-wrap: break-word;
     font-size: 16px;
     line-height: 1.4;
+    background-color: white;
+    color: black;
 }
 
 a {
@@ -98,4 +100,19 @@ img.emoji {
     */
     pointer-events: none;
     cursor: text;
+}
+
+@media (prefers-color-scheme: dark) {
+    body {
+        background: rgb(39, 43, 46);
+        color: white;
+    }
+    hr {
+        height: 1px;
+        background-color: #bbbbc0;
+        border: 1px #bbbbc0;
+    }
+    a.header {
+        color: white;
+    }
 }
