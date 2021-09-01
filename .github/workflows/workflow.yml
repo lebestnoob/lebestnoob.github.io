@@ -1,0 +1,14 @@
+name: Upload xml sitemap
+
+on:
+  push:
+    branches: [ main ]
+    
+jobs:
+    deployment_job:
+        steps:
+            - actions/checkout@v1
+            - run: deploy # Deploy your site
+            - uses: atymic/sitemap-ping-action@master
+              with:
+                  sitemapUrl: ${{ secrets.SITEMAP_URL }}
