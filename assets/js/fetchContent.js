@@ -14,6 +14,10 @@ window.onload = function(){
                             if(currentKey == "main.html") {
                                 fetchContent("/pages/" + path, function(pageResult){
                                     document.getElementById(templatesList[currentKey].id).innerHTML = pageResult;
+                                    var scripts = document.getElementsByTagName("script");
+                                    for(var i=0; i<scripts.length; i++){
+                                        eval(scripts[i].text)
+                                    }
                                 });
                             } else {
                             
