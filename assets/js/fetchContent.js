@@ -23,19 +23,9 @@ window.onload = function(){
         }
     }
 
-    var hrefs = document.getElementsByTagName("a");
-
-    for(var i=0; i < hrefs.length; i++){
-        if(hrefs[i].href.includes("#")) {
-            hrefs[i].onclick = function(){
-                                window.location.hash = this.href;
-                                setTimeout(function() {
-                                    window.location.reload();
-                                }, 100);
-                            }
-        }
-    }
-
+    window.onhashchange = function() {
+        window.location.reload();
+    };
 }
 
 function fetchContent(url){
