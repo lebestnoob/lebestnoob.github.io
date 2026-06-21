@@ -1,45 +1,53 @@
 window.onload = function(){
-    if (document.readyState === "complete") {
+        fetchContent("/templates/assembly.json", function(content){
+            var templatesList = JSON.parse(content);
 
-        var content  = fetchContent("/templates/assembly.json");
-        var templatesList = JSON.parse(content);
-        var keys = Object.keys(templatesList);
-        
-        var arr = [];
-        for (var i=0; i < keys.length; i++) {   
-            
-            var result = fetchContent("/templates/" + keys[i]);
-            var path = window.location.hash.substring(1, window.location.hash.length);
-
-            if (window.location.pathname != "/")  { 
-                path = "404.html";
-            } 
-
-            if(keys[i] == "main.html") {
-                result = fetchContent("/pages/" + path);
+            for (var key in templatesList) {   
+                    (function(currentKey) {
+                        fetchContent("/templates/" + currentKey, function(result) {;
+                            var path = window.location.hash.substring(1, window.location.hash.length);
+                
+                            if (window.location.pathname != "/")  { 
+                                path = "404.html";
+                            } 
+                
+                            if(currentKey == "main.html") {
+                                fetchContent("/pages/" + path, function(pageResult){
+                                    document.getElementById(templatesList[currentKey].id).innerHTML = pageResult;
+                                });
+                            } else {
+                            
+                            document.getElementById(templatesList[currentKey].id).innerHTML = result;
+                            }
+                        });
+                    })(key);
             }
-            
-            document.getElementById(templatesList[keys[i]].id).innerHTML = result;
-            
-        }
-    }
+
+        });
 
     window.onhashchange = function() {
         window.location.reload();
     };
 }
 
-function fetchContent(url){
+function fetchContent(url, callback){
     var req = new XMLHttpRequest();
-        
-    req.open('GET', url, false);
-    req.send();
-        
-    if (req.status == 404){
-        window.location.href = "/404.html" + window.location.hash
+    req.callback = callback;
+
+    req.open('GET', url, true);
+    
+    req.onreadystatechange = function(){
+        if (req.readyState === 4) {
+            if (req.status === 200) {
+                callback(req.responseText);
+            } else {
+                if (req.status == 404){
+                    window.location.href = "/404.html" + window.location.hash
+                }
+            }
+        }
     }
-
-    return req.responseText;
-
+    
+    req.send();
 }
 
