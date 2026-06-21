@@ -78,15 +78,6 @@ article.main {
     float: left;
 }
 
-.center {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    min-height: 75vh;
-}
-
 @media (prefers-color-scheme: dark) {
     body {
         background: rgb(39, 43, 46);

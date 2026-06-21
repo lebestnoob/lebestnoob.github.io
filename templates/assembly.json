@@ -1,0 +1,11 @@
+{
+    "header.html": {
+        "id": "header"
+    },
+    "main.html":{
+        "id": "main"
+    },
+    "footer.html": {
+        "id": "footer"
+    }
+}

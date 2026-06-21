@@ -1,0 +1,33 @@
+window.onload = function(){
+    if (document.readyState === "complete") {
+
+        var content  = fetchContent("/templates/assembly.json");
+        var templatesList = JSON.parse(content);
+        var keys = Object.keys(templatesList);
+        
+        var arr = [];
+        for (var i=0; i < keys.length; i++){   
+            
+            var result = fetchContent("/templates/" + keys[i]);
+            var path = window.location.pathname;
+            
+            if(keys[i] == "main.html")
+                result = fetchContent("/pages/" + path);
+            
+            document.getElementById(templatesList[keys[i]].id).innerHTML = result;
+            
+        }
+
+    }
+}
+
+function fetchContent(url){
+    var req = new XMLHttpRequest();
+
+        req.open('GET', url, false);
+        req.send();
+
+        return req.responseText;
+
+}
+
