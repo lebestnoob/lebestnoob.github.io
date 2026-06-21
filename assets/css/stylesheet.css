@@ -1,6 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 body {
-    font-family: 'Open Sans', sans-serif;
+    font-family: sans-serif;
     margin: 0;
     height: 100vh;
     padding-left: 30px;
@@ -86,20 +85,6 @@ article.main {
     align-items: center;
     text-align: center;
     min-height: 75vh;
-}
-
-img.emoji {
-    /* Since we are using SVGs, you have to change the width using CSS */
-    width: 1.2em;
-    height: 1.2em;
-    /* 
-    This is to make the emojis feel like actual emojis to 
-    the user and they won't act like images. This makes the emojis
-    non-reactive to any mouse events such as dragging, 
-    hovering, clicking etc. Makes it feel like its actual text.
-    */
-    pointer-events: none;
-    cursor: text;
 }
 
 @media (prefers-color-scheme: dark) {
