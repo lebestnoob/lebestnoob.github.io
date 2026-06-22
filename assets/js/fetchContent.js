@@ -1,6 +1,11 @@
 window.onload = function(){
         fetchContent("/templates/assembly.json", function(content){
-            var templatesList = JSON.parse(content);
+            var templatesList;            
+            try {
+                templatesList = JSON.parse(content);
+            } catch(e){
+                templatesList = eval('(' + content + ')');
+            }
 
             for (var key in templatesList) {   
                     (function(currentKey) {
@@ -28,14 +33,33 @@ window.onload = function(){
             }
 
         });
-
-    window.onhashchange = function() {
-        window.location.reload();
-    };
+    
+        var currentHash = window.location.hash;
+        if ("onhashchange" in window) {
+            window.onhashchange = function() {
+                window.location.reload();
+            };
+        } else {
+            setInterval(function() {
+                if (window.location.hash != currentHash) {
+                    window.location.reload();
+                }
+            }, 100);
+        }
 }
 
 function fetchContent(url, callback){
-    var req = new XMLHttpRequest();
+    var req;
+    
+    try {
+     req = new XMLHttpRequest();
+    } catch(e) {
+        try {
+            req = new ActiveXObject("Msxml2.XMLHTTP");
+        } catch(e1) {
+            req = new ActiveXObject('Microsoft.XMLHTTP');
+        }
+    }
     req.callback = callback;
 
     req.open('GET', url, true);
@@ -45,7 +69,7 @@ function fetchContent(url, callback){
             if (req.status === 200) {
                 callback(req.responseText);
             } else {
-                if (req.status == 404){
+                if (req.status === 404){
                     window.location.href = "/404.html" + window.location.hash
                 }
             }
