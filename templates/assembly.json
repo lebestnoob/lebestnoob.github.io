@@ -1,4 +1,8 @@
 {
+    "head.html": {
+        "id": "head",
+        "append": true
+    },
     "header.html": {
         "id": "header"
     },

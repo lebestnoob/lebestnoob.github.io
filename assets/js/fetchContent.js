@@ -1,9 +1,9 @@
-window.onload = function(){
-        fetchContent("/templates/assembly.json", function(content){
+window.onload = function() {
+        fetchContent("/templates/assembly.json", function(content) {
             var templatesList;            
             try {
                 templatesList = JSON.parse(content);
-            } catch(e){
+            } catch(e) {
                 templatesList = eval('(' + content + ')');
             }
 
@@ -17,16 +17,17 @@ window.onload = function(){
                             } 
                 
                             if(currentKey == "main.html") {
-                                fetchContent("/pages/" + path, function(pageResult){
+                                fetchContent("/pages/" + path, function(pageResult) {
                                     document.getElementById(templatesList[currentKey].id).innerHTML = pageResult;
                                     var scripts = document.getElementsByTagName("script");
-                                    for(var i=0; i<scripts.length; i++){
+                                    for(var i=0; i<scripts.length; i++) {
                                         eval(scripts[i].text)
                                     }
                                 });
+                            } else if (templatesList[currentKey].append) {
+                                document.getElementById(templatesList[currentKey].id).innerHTML += result;
                             } else {
-                            
-                            document.getElementById(templatesList[currentKey].id).innerHTML = result;
+                                document.getElementById(templatesList[currentKey].id).innerHTML = result;
                             }
                         });
                     })(key);
@@ -48,7 +49,7 @@ window.onload = function(){
         }
 }
 
-function fetchContent(url, callback){
+function fetchContent(url, callback) {
     var req;
     
     try {
@@ -64,12 +65,12 @@ function fetchContent(url, callback){
 
     req.open('GET', url, true);
     
-    req.onreadystatechange = function(){
+    req.onreadystatechange = function() {
         if (req.readyState === 4) {
             if (req.status === 200) {
                 callback(req.responseText);
             } else {
-                if (req.status === 404){
+                if (req.status === 404) {
                     window.location.href = "/404.html" + window.location.hash
                 }
             }
