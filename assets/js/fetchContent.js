@@ -19,6 +19,7 @@ window.onload = function() {
                             if(currentKey == "main.html") {
                                 fetchContent("/pages/" + path, function(pageResult) {
                                     document.getElementById(templatesList[currentKey].id).innerHTML = pageResult;
+                                    document.title = document.getElementById(templatesList[currentKey].id).getElementsByTagName("h1")[0].innerText
                                     var scripts = document.getElementsByTagName("script");
                                     for(var i=0; i<scripts.length; i++) {
                                         eval(scripts[i].text)
