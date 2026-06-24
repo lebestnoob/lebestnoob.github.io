@@ -1,0 +1,45 @@
+<h1>Hello World!</h1>
+<small>lebestnoob | Published: 24/6/26</small>
+
+<p>This is the first post! Very short and relevant description! </p>
+
+<p>There probably won't be more, and there definetely won't be an RSS feed. The entire page is dynamically generated with client sided routing, targeting Internet Explorer 11 (and older!). I'm just a bit tired of seeing repetitive blog templates and the use of heavy frameworks just for text. </p>
+
+<p> New features to be added include: </p>
+
+    <ul>
+        <li>Basic Markdown Syntax
+            <ul>
+                <li>
+                    Although writing plain HTML isn't as bad now that the templating is automatic, it's still annoying for anything more complex than just text (ie: tables, lists)
+                </li>
+                <li>
+                    The parser would run on the client and make use of RegExps. I don't believe that it'd be that difficult to create
+                </li>
+            </ul>
+        </li>
+        <li>Comments</li>
+            <ul>
+                <li>
+                    Not a priority at the moment
+                </li>
+                <li>
+                    However, newer TLS requirements would pose an issue if I were to utilize GitHub issues and the GitHub API, so it's likely it'll only be accessible on modern browsers if added
+                 </li>
+            </ul>
+        <li>Automatic Post Sidecar Generation</li>
+            <ul>
+                <li>
+                    The mechanism to write new articles is horrible as I have to manually update the JSON sidecar to fill in with new metadata to make them appear on the blog list. I could use the GitHub API to detect author, publish dates, and update dates, but TLS would be an issue for older browsers </li>
+                <li>The sidecar and the post metadata are not linked, and it certainly wouldn't be practical to load every post on the client to extract this information. Rather than manually updating the sidecar, I could use a program while I write them to update the JSON with information in the blog, but I doubt I'll be writing much so I don't consider this to be a huge problem</li>
+                <li>The JSON sidecar could become inflated in size as all metadata is stored in a single file. I am not too concerned as I don't believe I will be writing a lot</li>
+                <li>The first two problems could easily be solved by loading the sidecar in every post and applying the relevant data, but if the file size of the sidecar grows, performance will degrade. This is not ideal, but I can deal with manually updating data. Again, I'm not writing a lot </li>
+            </ul>
+        <li>Page Navigation Indicators</li>
+            <ul>
+                <li>Not a priorty at the moment</li>
+                <li>User experience would be improved</li>
+            </ul>
+    </ul>
+     
+<p>TLDR: I want your browser to do the processing on my static web site haha... </p>

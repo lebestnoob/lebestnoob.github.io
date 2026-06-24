@@ -1,0 +1,24 @@
+<h1>Latest Posts:</h1>
+
+<div id="content"></div>
+
+<script>document.title="Latest Posts";</script>
+<script>
+    fetchContent("/pages/posts/posts.json", function(res) {
+        var posts = eval(res);
+
+        for(var j = 0; j < posts.length; j++) {
+            var dateInfo;
+            if(posts[j].updated){
+                dateInfo =  "Updated: " + posts[j].updated + " Published: " + posts[j].date;
+            } else {
+                dateInfo = " Published: " + posts[j].date;
+            }
+            document.getElementById("content").innerHTML += "<a href='" + "/#posts/"+posts[j].href + "'>" + 
+                "<h2>"+posts[j].title+"</h2>" + 
+                posts[j].desc+"<br/>" + "<small>"+posts[j].author + " | " + dateInfo + "</small>" +
+                "</a>";
+
+        }
+    });
+</script>
