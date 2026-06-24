@@ -8,3 +8,19 @@
 
 <br />
 <hr />
+
+<script>
+    var headerHrefs = document.getElementsByClassName("header");
+    if(window.location.pathname == "/" && !currentHash) {
+        headerHrefs[0].style.textDecoration = "underline";
+    } else {
+        for(var k=0; k<headerHrefs.length; k++) {
+            if (headerHrefs[k].href.endsWith(currentHash)) {
+                headerHrefs[k].style.textDecoration = "underline";
+            }
+        }
+    }
+    if(currentHash.startsWith("#posts")) {
+        headerHrefs[1].style.textDecoration = "underline";
+    }
+</script>
