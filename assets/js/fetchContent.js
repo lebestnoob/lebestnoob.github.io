@@ -20,7 +20,11 @@ window.onload = function() {
                                 fetchContent("/pages/" + path, function(pageResult) {
                                     document.getElementById(templatesList[currentKey].id).innerHTML = pageResult;
                                     document.title = document.getElementById(templatesList[currentKey].id).getElementsByTagName("h1")[0].innerText;
-                                    document.getElementById("head").innerHTML += "<meta name=\"description\" content=\"" + document.getElementById(templatesList[currentKey].id).getElementsByTagName("p")[0].innerText + "\">";
+
+                                    if(document.getElementById(templatesList[currentKey].id).getElementsByTagName("p")[0]) {
+                                        document.getElementById("head").innerHTML += "<meta name=\"description\" content=\"" + document.getElementById(templatesList[currentKey].id).getElementsByTagName("p")[0].innerText + "\">";
+                                    }
+                                    
                                     var scripts = document.getElementsByTagName("script");
                                     for(var i=0; i<scripts.length; i++) {
                                         eval(scripts[i].text)
