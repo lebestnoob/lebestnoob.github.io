@@ -1,5 +1,5 @@
 <h1>Latest Posts</h1>
-The land of not many ramblings. 
+The land of (not) many ramblings
 
 <div id="content"></div>
 
@@ -7,6 +7,26 @@ The land of not many ramblings.
 <script>
     fetchContent("/pages/posts/posts.json", function(res) {
         var posts = eval(res);
+
+        posts.sort(compareDates)
+
+        // console.log(posts)
+
+        function compareDates(a,b) {
+
+            var greaterDateA = Date.parse(a.date);
+            if(Date.parse(a.updated) > Date.parse(a.date)) {
+                greaterDateA = Date.parse(a.updated);
+            }
+            var greaterDateB = Date.parse(b.date);
+            if(Date.parse(b.updated) > Date.parse(b.date)) {
+                greaterDateB = Date.parse(b.updated);
+            }
+
+            console.log(Date.parse(a.date), Date.parse(b.date))
+            return greaterDateB - greaterDateA;
+            
+        }
 
         for(var j = 0; j < posts.length; j++) {
             var dateInfo;
