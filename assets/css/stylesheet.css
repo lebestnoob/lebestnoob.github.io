@@ -43,12 +43,12 @@ a.header {
     color: black;
 }
 
-header {
+#header {
     margin-top: 15px;
     min-height: 50px;
 }
 
-footer {
+#footer {
     min-height: 50px;
     margin-top: auto;
     padding-bottom: 10px;
@@ -64,7 +64,7 @@ hr {
     border: 1px #202131;
 }
 
-article.main {
+#main {
     max-width: 640px;
     margin: 0 auto;
     padding: 4rem 2rem;

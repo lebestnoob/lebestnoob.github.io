@@ -1,26 +1,27 @@
 <a class="header left" href="/">Home</a>
 
-<span class="right">
-    <a class="header" href="/#blog.html">Blog</a>
-    &nbsp;
-    <a class="header" href="/#about.html">About</a>
-</span>
+<a class="header right" href="/#about.html">About</a>
+
+<a class="header right" href="/#blog.html">Blog&nbsp;</a>
 
 <br />
 <hr />
 
 <script>
-    var headerHrefs = document.getElementsByClassName("header");
+    var headerHrefs = document.getElementById("header").children;
     if(window.location.pathname == "/" && !currentHash) {
         headerHrefs[0].style.textDecoration = "underline";
     } else {
         for(var k=0; k<headerHrefs.length; k++) {
-            if (headerHrefs[k].href.endsWith(currentHash)) {
-                headerHrefs[k].style.textDecoration = "underline";
+            if(headerHrefs[k].tagName == "A") {
+                console.log(headerHrefs[0]);
+                if (headerHrefs[k].href.endsWith(currentHash)) {
+                    headerHrefs[k].style.textDecoration = "underline";
+                }
             }
         }
     }
     if(currentHash.startsWith("#posts")) {
-        headerHrefs[1].style.textDecoration = "underline";
+        headerHrefs[2].style.textDecoration = "underline";
     }
 </script>

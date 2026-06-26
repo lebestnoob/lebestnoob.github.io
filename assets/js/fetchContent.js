@@ -10,30 +10,31 @@ window.onload = function() {
             for (var key in templatesList) {   
                     (function(currentKey) {
                         fetchContent("/templates/" + currentKey, function(result) {;
-                            var path = window.location.hash.substring(1, window.location.hash.length);
+                            var path = window.location.pathname != "/" ? "404.html" : window.location.hash.substring(1, window.location.hash.length);
                 
-                            if (window.location.pathname != "/")  { 
-                                path = "404.html";
-                            } 
-                
+                            var html = document.getElementById(templatesList[currentKey].id);
                             if(currentKey == "main.html") {
                                 fetchContent("/pages/" + path, function(pageResult) {
-                                    document.getElementById(templatesList[currentKey].id).innerHTML = pageResult;
-                                    document.title = document.getElementById(templatesList[currentKey].id).getElementsByTagName("h1")[0].innerText;
+                                    html.innerHTML = pageResult;
+                                    document.title = html.getElementsByTagName("h1")[0].innerText;
 
-                                    if(document.getElementById(templatesList[currentKey].id).getElementsByTagName("p")[0]) {
-                                        document.getElementById("head").innerHTML += "<meta name=\"description\" content=\"" + document.getElementById(templatesList[currentKey].id).getElementsByTagName("p")[0].innerText + "\">";
+                                    if (html.getElementsByTagName("p")[0]) {
+                                        document.getElementById("head").insertAdjacentHTML("beforeend", "<meta name=\"description\" content=\"" + html.getElementsByTagName("p")[0].innerText + "\">");
                                     }
                                     
-                                    var scripts = document.getElementsByTagName("script");
+                                    var scripts = html.getElementsByTagName("script");
                                     for(var i=0; i<scripts.length; i++) {
                                         eval(scripts[i].text)
                                     }
                                 });
                             } else if (templatesList[currentKey].append) {
-                                document.getElementById(templatesList[currentKey].id).innerHTML += result;
+                                html.insertAdjacentHTML("beforeend",result);
                             } else {
-                                document.getElementById(templatesList[currentKey].id).innerHTML = result;
+                                html.innerHTML = result;
+                                var scripts = html.getElementsByTagName("script");
+                                for(var i=0; i<scripts.length; i++) {
+                                    eval(scripts[i].text)
+                                }
                             }
                         });
                     })(key);
@@ -67,7 +68,6 @@ function fetchContent(url, callback) {
             req = new ActiveXObject('Microsoft.XMLHTTP');
         }
     }
-    req.callback = callback;
 
     req.open('GET', url, true);
     
@@ -86,3 +86,16 @@ function fetchContent(url, callback) {
     req.send();
 }
 
+if (!String.prototype.startsWith) {
+    String.prototype.startsWith = function(searchString, position){
+      position = position || 0;
+      return this.substr(position, searchString.length) === searchString;
+  };
+}
+
+if (!String.prototype.endsWith) {
+    String.prototype.endsWith = function(searchString, strtLength){
+        strtLength = (strtLength === undefined || strtLength > this.length)? this.length : strtLength;  	
+        return this.substr(strtLength - searchString.length, strtLength) === searchString;
+  };
+}
