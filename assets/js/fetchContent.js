@@ -9,28 +9,13 @@ window.onload = function() {
 
             for (var key in templatesList) {   
                     (function(currentKey) {
-                        fetchContent("/templates/" + currentKey, function(result) {;
-                            var path = window.location.pathname != "/" ? "404.html" : window.location.hash.substring(1, window.location.hash.length);
+                        fetchContent("/templates/" + currentKey, function(result) {
                 
                             var html = document.getElementById(templatesList[currentKey].id);
                             if(currentKey == "main.html") {
-                                fetchContent("/pages/" + path, function(pageResult) {
-                                    html.innerHTML = pageResult;
-                                    document.title = html.getElementsByTagName("h1")[0].innerText;
-
-                                    if (html.getElementsByTagName("p")[0]) {
-                                        document.getElementById("head").insertAdjacentHTML("beforeend", "<meta name=\"description\" content=\"" + html.getElementsByTagName("p")[0].innerText + "\">");
-                                    }
-                                    
-                                    var scripts = html.getElementsByTagName("script");
-                                    for(var i=0; i<scripts.length; i++) {
-                                        eval(scripts[i].text)
-                                    }
-
-                                    document.title = document.title != "lebestnoob" ? document.title + " - lebestnoob" : document.title
-                                });
+                                loadContent();
                             } else if (templatesList[currentKey].append) {
-                                html.insertAdjacentHTML("beforeend",result);
+                                html.insertAdjacentHTML("beforeend", result);
                             } else {
                                 html.innerHTML = result;
                                 var scripts = html.getElementsByTagName("script");
@@ -45,14 +30,25 @@ window.onload = function() {
         });
     
         var currentHash = window.location.hash;
+        if(!currentHash) {
+            currentHash = "#";
+        }
         if ("onhashchange" in window) {
             window.onhashchange = function() {
-                window.location.reload();
+                currentHash = window.location.hash;
+                if(!currentHash) {
+                    currentHash = "#";
+                }
+                loadContent();
             };
         } else {
             setInterval(function() {
                 if (window.location.hash != currentHash) {
-                    window.location.reload();
+                    currentHash = window.location.hash;
+                    if(!currentHash) {
+                        currentHash = "#";
+                    }
+                    loadContent();
                 }
             }, 100);
         }
@@ -87,6 +83,26 @@ function fetchContent(url, callback) {
     
     req.send();
 }
+
+function loadContent(){
+    var path = window.location.pathname != "/" ? "404.html" : window.location.hash.substring(1, window.location.hash.length);
+    var main = document.getElementById("main");
+    fetchContent("/pages/" + path, function(pageResult) {
+        main.innerHTML = pageResult;
+        document.title = main.getElementsByTagName("h1")[0].innerText;
+
+        if (main.getElementsByTagName("p")[0]) {
+            document.getElementById("head").insertAdjacentHTML("beforeend", "<meta name=\"description\" content=\"" + main.getElementsByTagName("p")[0].innerText + "\">");
+        }
+        
+        var scripts = main.getElementsByTagName("script");
+        for(var i=0; i<scripts.length; i++) {
+            eval(scripts[i].text)
+        }
+
+        document.title = document.title != "lebestnoob" ? document.title + " - lebestnoob" : document.title;
+    }
+)}
 
 if (!String.prototype.startsWith) {
     String.prototype.startsWith = function(searchString, position){
