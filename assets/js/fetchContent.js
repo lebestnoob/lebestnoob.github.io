@@ -26,6 +26,8 @@ window.onload = function() {
                                     for(var i=0; i<scripts.length; i++) {
                                         eval(scripts[i].text)
                                     }
+
+                                    document.title = document.title != "lebestnoob" ? document.title + " - lebestnoob" : document.title
                                 });
                             } else if (templatesList[currentKey].append) {
                                 html.insertAdjacentHTML("beforeend",result);
