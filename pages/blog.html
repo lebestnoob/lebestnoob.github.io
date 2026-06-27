@@ -11,25 +11,17 @@ The land of (not) many ramblings
         posts.sort(compareDates)
 
         function compareDates(a,b) {
-            var greaterDateA = Date.parse(a.date);
-            if(Date.parse(a.updated) > Date.parse(a.date)) {
-                greaterDateA = Date.parse(a.updated);
-            }
-            var greaterDateB = Date.parse(b.date);
-            if(Date.parse(b.updated) > Date.parse(b.date)) {
-                greaterDateB = Date.parse(b.updated);
-            }
+            var greaterDateA = Date.parse(a.updated) > Date.parse(a.date) ? Date.parse(a.updated) : Date.parse(a.date);
+
+            var greaterDateB = Date.parse(b.updated) > Date.parse(b.date) ? Date.parse(b.updated) : Date.parse(b.date);
 
             return greaterDateB - greaterDateA; 
         }
 
         for(var j = 0; j < posts.length; j++) {
-            var dateInfo;
-            if(posts[j].updated){
-                dateInfo =  "Updated: " + posts[j].updated + " Published: " + posts[j].date;
-            } else {
-                dateInfo = " Published: " + posts[j].date;
-            }
+            var dateInfo = posts[j].updated ? 
+                "Updated: " + posts[j].updated + ", Published: " + posts[j].date : " Published: " + posts[j].date;
+
             document.getElementById("content").innerHTML += "<a href='" + "/#posts/"+posts[j].href + "'>" + 
                 "<h2>"+posts[j].title+"</h2>" + 
                 posts[j].desc+"<br/>" + "<small>"+posts[j].author + " | " + dateInfo + "</small>" +
