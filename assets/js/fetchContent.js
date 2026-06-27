@@ -33,15 +33,15 @@ window.onload = function() {
         if(!currentHash) {
             currentHash = "#";
         }
-        if ("onhashchange" in window) {
-            window.onhashchange = function() {
-                currentHash = window.location.hash;
-                if(!currentHash) {
-                    currentHash = "#";
-                }
-                loadContent();
-            };
-        } else {
+        // if ("onhashchange" in window) {
+        //     window.onhashchange = function() {
+        //         currentHash = window.location.hash;
+        //         if(!currentHash) {
+        //             currentHash = "#";
+        //         }
+        //         loadContent();
+        //     };
+        // } else {
             setInterval(function() {
                 if (window.location.hash != currentHash) {
                     currentHash = window.location.hash;
@@ -51,7 +51,7 @@ window.onload = function() {
                     loadContent();
                 }
             }, 100);
-        }
+        // }
 }
 
 function fetchContent(url, callback) {
