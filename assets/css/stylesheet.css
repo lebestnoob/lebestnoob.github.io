@@ -22,6 +22,10 @@ a:link, a:visited, a:focus, a:hover, a:active {
     color: #2065DF;
 }
 
+a:hover {
+    text-decoration: underline;
+}
+
 a.header {
     color: black;
 }
@@ -60,6 +64,10 @@ hr {
 
 .left {
     float: left;
+}
+
+img {
+    width: 100%;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -14,7 +14,7 @@ function loadTemplate() {
         var keys = [];
         for (var k in templatesList) {
             if (templatesList.hasOwnProperty(k)) { 
-                keys.push(k);
+                keys[keys.length] = k;
                 }
         }
         var remaining = keys.length;
@@ -38,13 +38,17 @@ function loadTemplate() {
 }
 
 function doTemplating(currentKey, result){
-    var html = document.getElementById(currentKey.id);
+    var html = document.getElementById ? document.getElementById(currentKey.id) : document.all[currentKey.id];
     if(!html){
         return;
     }
 
     if (currentKey.append) {
-        html.insertAdjacentHTML("beforeend", result);
+        if(html.insertAdjacentHTML) {
+            html.insertAdjacentHTML("beforeend", result);
+        } else {
+            html.innerHTML += result;
+        }
     } else {
         html.innerHTML = result;
         var scripts = html.getElementsByTagName("script");
@@ -86,7 +90,7 @@ function fetchContent(url, callback) {
 
 function loadContent() {
     var path = window.location.pathname != "/" ? "404.html" : window.location.hash.substring(1, window.location.hash.length);
-    var main = document.getElementById("main");
+    var main = document.getElementById ? document.getElementById("main") : document.all["main"];
 
     if (window.loading) {
         clearTimeout(window.loading);
@@ -97,12 +101,18 @@ function loadContent() {
         if (path.endsWith(".md")) {
             result = mdtoHTML(pageResult)
         }
-        
+    
+
         main.innerHTML = result;
-        document.title = main.getElementsByTagName("h1")[0].innerText || "lebestnoob";
+        document.title = (main.getElementsByTagName("h1")[0].innerText || main.getElementsByTagName("p")[0].textContent) || "lebestnoob";
 
         if (main.getElementsByTagName("p")[0]) {
-            document.getElementById("head").insertAdjacentHTML("beforeend", "<meta name=\"description\" content=\"" + main.getElementsByTagName("p")[0].innerText + "\">");
+            var metaElm  = document.createElement("meta");
+            metaElm.name = "description";
+            metaElm.content = main.getElementsByTagName("p")[0].innerText || main.getElementsByTagName("p")[0].textContent;
+            
+            var head = document.getElementById ? document.getElementById("head") : document.all["head"];
+            head.appendChild(metaElm);
         }
         
         var scripts = main.getElementsByTagName("script");
@@ -118,7 +128,9 @@ function loadContent() {
 
 var Router = {
     updateHeader: function (currentHash) {
-        var headerHrefs = document.getElementById("header").children;
+        var headerElm = document.getElementById ? document.getElementById("header") : document.all["header"];
+        var headerHrefs = headerElm.children || headerElm.childNodes;
+
         var navcurrentHash = "/" + currentHash;
     
         if(window.location.pathname == "/") {
@@ -156,8 +168,8 @@ var Router = {
                 self.changeRoute();
             };
         } else {
+            var lastHash = window.location.hash;
             setInterval(function() {
-                var lastHash = window.location.hash;
                 if (window.location.hash != lastHash) {
                     lastHash = window.location.hash;
                     self.changeRoute();
@@ -217,10 +229,10 @@ function mdtoHTML(str) {
             continue;
         }
         if(chunks[l].startsWith("#") || chunks[l].startsWith("`") || chunks[l].startsWith("<hr />") || chunks[l].startsWith("<blockquote>")) {
-            processedArr.push(chunks[l]);
+            processedArr[processedArr.length] = chunks[l];
             continue;
         }
-        processedArr.push("<p>" + chunks[l] + "</p>");
+        processedArr[processedArr.length] = "<p>" + chunks[l] + "</p>";
     }
     final = processedArr.join("\n\n");
     
