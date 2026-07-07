@@ -6,30 +6,3 @@
 
 <br />
 <hr />
-
-<script>
-    var trackHash;
-    var headerHrefs = document.getElementById("header").children;
-
-    setInterval(function(){
-        if(trackHash == currentHash) return;
-        trackHash = currentHash;
-
-        var navcurrentHash = "/" + currentHash;
-
-        if(window.location.pathname == "/") {
-            for(var k=0; k<headerHrefs.length; k++) {
-                if(headerHrefs[k].tagName == "A") {
-                    if (headerHrefs[k].href.endsWith(navcurrentHash)) {
-                        headerHrefs[k].style.textDecoration = "underline";
-                    } else {
-                         headerHrefs[k].style.textDecoration = "none";
-                    }
-                    if(headerHrefs[k].href.endsWith("#blog.html") && currentHash.startsWith("#posts")){
-                        headerHrefs[k].style.textDecoration = "underline";
-                    }
-                }
-            }
-        }
-    }, 100)
-</script>

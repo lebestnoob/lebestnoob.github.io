@@ -1,1 +1,10 @@
-<h1> This is a sample of the system in action! </h1>
+<h1 id="loading"> This is a sample of the router in action! <br /> The page is loading.</h1>
+
+<script>    
+    window.loading = setTimeout(function(){
+            var status = document.getElementById("loading");
+            if(status) {
+                status.innerHTML += "<br /> If you're still seeing this, something has gone terribly gone."
+            }
+        }, 1500)
+</script>

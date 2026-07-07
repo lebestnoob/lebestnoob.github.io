@@ -8,51 +8,39 @@ window.onload = function() {
                 templatesList = eval('(' + content + ')');
             }
 
-            for (var key in templatesList) {   
+            var keys = [];
+            for (var k in templatesList) {
+                if (templatesList.hasOwnProperty(k)) { 
+                    keys.push(k);
+                 }
+            }
+            var remaining = keys.length;
+
+            for (var l = 0; l < keys.length; l++) {   
                     (function(currentKey) {
                         fetchContent("/templates/" + currentKey, function(result) {
-                
                             var html = document.getElementById(templatesList[currentKey].id);
-                            if(currentKey == "main.html") {
-                                loadContent();
-                            } else if (templatesList[currentKey].append) {
+                            
+                            if (templatesList[currentKey].append) {
                                 html.insertAdjacentHTML("beforeend", result);
                             } else {
                                 html.innerHTML = result;
                                 var scripts = html.getElementsByTagName("script");
-                                for(var i=0; i<scripts.length; i++) {
-                                    eval(scripts[i].text)
+                                for(var j=0; j<scripts.length; j++) {
+                                    eval(scripts[j].text)
                                 }
                             }
-                        });
-                    })(key);
-            }
+                            remaining--;
 
+                            if(remaining == 0) {
+                                initRouter();  
+                            }
+                        });
+                    })(keys[l]);
+            }
+            
         });
-    
-        var currentHash = window.location.hash;
-        if(!currentHash) {
-            currentHash = "#";
-        }
-        if ("onhashchange" in window) {
-            window.onhashchange = function() {
-                currentHash = window.location.hash;
-                if(!currentHash) {
-                    currentHash = "#";
-                }
-                loadContent();
-            };
-        } else {
-            setInterval(function() {
-                if (window.location.hash != currentHash) {
-                    currentHash = window.location.hash;
-                    if(!currentHash) {
-                        currentHash = "#";
-                    }
-                    loadContent();
-                }
-            }, 100);
-        }
+
 }
 
 function fetchContent(url, callback) {
@@ -85,9 +73,14 @@ function fetchContent(url, callback) {
     req.send();
 }
 
-function loadContent(){
+function loadContent() {
     var path = window.location.pathname != "/" ? "404.html" : window.location.hash.substring(1, window.location.hash.length);
     var main = document.getElementById("main");
+
+    if (window.loading) {
+        clearTimeout(window.loading);
+    }
+    
     fetchContent("/pages/" + path, function(pageResult) {
         var result = pageResult;
         if (path.endsWith(".md")) {
@@ -95,7 +88,7 @@ function loadContent(){
         }
         
         main.innerHTML = result;
-        document.title = main.getElementsByTagName("h1")[0].innerText;
+        document.title = main.getElementsByTagName("h1")[0].innerText || "lebestnoob";
 
         if (main.getElementsByTagName("p")[0]) {
             document.getElementById("head").insertAdjacentHTML("beforeend", "<meta name=\"description\" content=\"" + main.getElementsByTagName("p")[0].innerText + "\">");
@@ -108,8 +101,54 @@ function loadContent(){
 
         document.title = document.title != "lebestnoob" ? document.title + " - lebestnoob" : document.title;
     }
+
 )}
 
+function updateHeader(currentHash) {
+    var headerHrefs = document.getElementById("header").children;
+    var navcurrentHash = "/" + currentHash;
+
+    if(window.location.pathname == "/") {
+        for(var k=0; k<headerHrefs.length; k++) {
+            if(headerHrefs[k].tagName == "A") {
+                if (headerHrefs[k].href.endsWith(navcurrentHash)) {
+                    headerHrefs[k].style.textDecoration = "underline";
+                } else {
+                    headerHrefs[k].style.textDecoration = "none";
+                }
+                if(headerHrefs[k].href.endsWith("#blog.html") && currentHash.startsWith("#posts")){
+                    headerHrefs[k].style.textDecoration = "underline";
+                }
+            }
+        }
+    }
+}
+
+function updateHash() {
+    var currentHash = window.location.hash || "#";
+    updateHeader(currentHash);
+}
+
+function initRouter() {
+        function changeRoute() {
+            loadContent();
+            updateHash();
+        }
+        changeRoute();
+        if ("onhashchange" in window) {
+            window.onhashchange = function() {
+                changeRoute();
+            };
+        } else {
+            setInterval(function() {
+                var lastHash = window.location.hash;
+                if (window.location.hash != lastHash) {
+                    lastHash = window.location.hash;
+                    changeRoute();
+                }
+            }, 100);
+        }
+}
 
 function mdtoHTML(str) {
     // Regex from https://gist.github.com/elfefe/ef08e583e276e7617cd316ba2382fc40
