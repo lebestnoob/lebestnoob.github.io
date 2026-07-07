@@ -1,46 +1,57 @@
-window.onload = function() {
-        
+window.onload = function() { 
+    loadTemplate();
+}
+
+function loadTemplate() {
     fetchContent("/templates/assembly.json", function(content) {
-            var templatesList;            
-            try {
-                templatesList = JSON.parse(content);
-            } catch(e) {
-                templatesList = eval('(' + content + ')');
-            }
+        var templatesList;            
+        try {
+            templatesList = JSON.parse(content);
+        } catch(e) {
+            templatesList = eval('(' + content + ')');
+        }
 
-            var keys = [];
-            for (var k in templatesList) {
-                if (templatesList.hasOwnProperty(k)) { 
-                    keys.push(k);
-                 }
-            }
-            var remaining = keys.length;
+        var keys = [];
+        for (var k in templatesList) {
+            if (templatesList.hasOwnProperty(k)) { 
+                keys.push(k);
+                }
+        }
+        var remaining = keys.length;
 
-            for (var l = 0; l < keys.length; l++) {   
-                    (function(currentKey) {
-                        fetchContent("/templates/" + currentKey, function(result) {
-                            var html = document.getElementById(templatesList[currentKey].id);
-                            
-                            if (templatesList[currentKey].append) {
-                                html.insertAdjacentHTML("beforeend", result);
-                            } else {
-                                html.innerHTML = result;
-                                var scripts = html.getElementsByTagName("script");
-                                for(var j=0; j<scripts.length; j++) {
-                                    eval(scripts[j].text)
-                                }
-                            }
-                            remaining--;
+        for (var l = 0; l < keys.length; l++) {   
+            (function(currentKey) {
+                fetchContent("/templates/" + currentKey, function(result) {
+        
+                    doTemplating(templatesList[currentKey], result)
 
-                            if(remaining == 0) {
-                                initRouter();  
-                            }
-                        });
-                    })(keys[l]);
-            }
-            
-        });
+                    remaining--;
 
+                    if(remaining == 0) {
+                        Router.init();  
+                        return;
+                    }
+                });
+            })(keys[l]);
+        }
+    });
+}
+
+function doTemplating(currentKey, result){
+    var html = document.getElementById(currentKey.id);
+    if(!html){
+        return;
+    }
+
+    if (currentKey.append) {
+        html.insertAdjacentHTML("beforeend", result);
+    } else {
+        html.innerHTML = result;
+        var scripts = html.getElementsByTagName("script");
+        for(var j=0; j<scripts.length; j++) {
+            eval(scripts[j].text)
+        }
+    }
 }
 
 function fetchContent(url, callback) {
@@ -104,50 +115,56 @@ function loadContent() {
 
 )}
 
-function updateHeader(currentHash) {
-    var headerHrefs = document.getElementById("header").children;
-    var navcurrentHash = "/" + currentHash;
 
-    if(window.location.pathname == "/") {
-        for(var k=0; k<headerHrefs.length; k++) {
-            if(headerHrefs[k].tagName == "A") {
-                if (headerHrefs[k].href.endsWith(navcurrentHash)) {
-                    headerHrefs[k].style.textDecoration = "underline";
-                } else {
-                    headerHrefs[k].style.textDecoration = "none";
-                }
-                if(headerHrefs[k].href.endsWith("#blog.html") && currentHash.startsWith("#posts")){
-                    headerHrefs[k].style.textDecoration = "underline";
+var Router = {
+    updateHeader: function (currentHash) {
+        var headerHrefs = document.getElementById("header").children;
+        var navcurrentHash = "/" + currentHash;
+    
+        if(window.location.pathname == "/") {
+            for(var k=0; k<headerHrefs.length; k++) {
+                if(headerHrefs[k].tagName == "A") {
+                    if (headerHrefs[k].href.endsWith(navcurrentHash)) {
+                        headerHrefs[k].style.textDecoration = "underline";
+                    } else {
+                        headerHrefs[k].style.textDecoration = "none";
+                    }
+                    if(headerHrefs[k].href.endsWith("#blog.html") && currentHash.startsWith("#posts")){
+                        headerHrefs[k].style.textDecoration = "underline";
+                    }
                 }
             }
         }
-    }
-}
+    }, 
 
-function updateHash() {
-    var currentHash = window.location.hash || "#";
-    updateHeader(currentHash);
-}
+    updateHash: function () {
+        var currentHash = window.location.hash || "#";
+        this.updateHeader(currentHash);
+    },
 
-function initRouter() {
-        function changeRoute() {
-            loadContent();
-            updateHash();
-        }
-        changeRoute();
+    changeRoute: function() {
+        loadContent();
+        this.updateHash();
+    },
+
+    init: function(){
+        var self = this;
+        self.changeRoute();
+
         if ("onhashchange" in window) {
             window.onhashchange = function() {
-                changeRoute();
+                self.changeRoute();
             };
         } else {
             setInterval(function() {
                 var lastHash = window.location.hash;
                 if (window.location.hash != lastHash) {
                     lastHash = window.location.hash;
-                    changeRoute();
+                    self.changeRoute();
                 }
             }, 100);
         }
+    }
 }
 
 function mdtoHTML(str) {
@@ -185,13 +202,13 @@ function mdtoHTML(str) {
     final = final.replace(unorderedListRegex, function(match, p1) {
         return "<ul><li>" + p1 + "</li></ul>";
     })
-    final = final.replaceAll("</li></ul>\n<ul><li>", "</li><li>")
+    final = final.replace(/<\/li><\/ul>\n<ul><li>/g, "</li><li>")
 
 
     final = final.replace(orderedListRegex, function(match, p1) {
         return "<ol><li>" + p1 + "</li></ol>";
     })
-    final = final.replaceAll("</li></ol>\n<ol><li>", "</li><li>")
+    final = final.replace(/<\/li><\/ol>\n<ol><li>/g, "</li><li>")
 
     var chunks = final.split(paragraphRegex);
     var processedArr = [];
