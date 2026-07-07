@@ -3,10 +3,14 @@ The land of (not) many ramblings
 
 <div id="content"></div>
 
-<script>document.title="Latest Posts";</script>
 <script>
     fetchContent("/pages/posts/posts.json", function(res) {
-        var posts = eval(res);
+        var posts;            
+        try {
+            posts = JSON.parse(res);
+        } catch(e) {
+            posts = eval(res);
+        }
 
         posts.sort(compareDates)
 
