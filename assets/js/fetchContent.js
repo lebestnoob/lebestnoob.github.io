@@ -164,18 +164,22 @@ function mdtoHTML(str) {
     var blockQuoteRegex = /^>\s*(.+)$/gm; // single-level quotes only
     var unorderedListRegex = /^\s*[-+*]\s+(.+)$/gm;
     var orderedListRegex = /^\s*\d+\.\s+(.+)$/gm;
-
     
     var paragraphRegex = /^([^#].*)|\n{2,}/g;
+    var horizontalLineRegex = /\n?(?:-{3,}|\*{3,}|_{3,})\n/g;
     
     var final = str;
     
+    final = final.replace(horizontalLineRegex, function(match,p1,p2){
+        return "<hr />";
+    })
+
     final = final.replace(codeBlockRegex, function(match,p1,p2){
         return "<pre><code>" + p1 + p2 + "</code></pre>";
     })
 
     final = final.replace(blockQuoteRegex, function(match,p1) {
-        return "<blockquote>" + p1 + "</blockquote>";
+        return "<blockquote><p>" + p1 + "</p></blockquote>";
     })
 
     final = final.replace(unorderedListRegex, function(match, p1) {
@@ -195,7 +199,7 @@ function mdtoHTML(str) {
         if(chunks[l]==undefined){
             continue;
         }
-        if(chunks[l].startsWith("#") || chunks[l].startsWith("`")) {
+        if(chunks[l].startsWith("#") || chunks[l].startsWith("`") || chunks[l].startsWith("<hr />") || chunks[l].startsWith("<blockquote>")) {
             processedArr.push(chunks[l]);
             continue;
         }
