@@ -1,3 +1,7 @@
+var siteConfiguration = {
+    title: "lebestnoob"
+}
+
 window.onload = function() { 
     loadTemplate();
 }
@@ -13,9 +17,8 @@ function loadTemplate() {
 
         var keys = [];
         for (var k in templatesList) {
-            if (templatesList.hasOwnProperty(k)) { 
+            if (templatesList.hasOwnProperty(k))
                 keys[keys.length] = k;
-                }
         }
         var remaining = keys.length;
 
@@ -39,16 +42,14 @@ function loadTemplate() {
 
 function doTemplating(currentKey, result){
     var html = document.getElementById ? document.getElementById(currentKey.id) : document.all[currentKey.id];
-    if(!html){
+    if (!html) 
         return;
-    }
 
     if (currentKey.append) {
-        if(html.insertAdjacentHTML) {
+        if (html.insertAdjacentHTML)
             html.insertAdjacentHTML("beforeend", result);
-        } else {
+        else 
             html.innerHTML += result;
-        }
     } else {
         html.innerHTML = result;
         var scripts = html.getElementsByTagName("script");
@@ -62,12 +63,16 @@ function fetchContent(url, callback) {
     var req;
     
     try {
-     req = new XMLHttpRequest();
+        req = new XMLHttpRequest();
     } catch(e) {
         try {
             req = new ActiveXObject("Msxml2.XMLHTTP");
         } catch(e1) {
-            req = new ActiveXObject('Microsoft.XMLHTTP');
+            try {
+                req = new ActiveXObject('Microsoft.XMLHTTP');
+            } catch(e2) {
+                return alert("XHR is not supported on your browser.");
+            }
         }
     }
 
@@ -75,13 +80,10 @@ function fetchContent(url, callback) {
     
     req.onreadystatechange = function() {
         if (req.readyState === 4) {
-            if (req.status === 200) {
+            if (req.status === 200)
                 callback(req.responseText);
-            } else {
-                if (req.status === 404) {
-                    window.location.href = "/404.html" + window.location.hash
-                }
-            }
+            else if (req.status === 404)
+                window.location.href = "/404.html" + window.location.hash
         }
     }
     
@@ -92,19 +94,16 @@ function loadContent() {
     var path = window.location.pathname != "/" ? "404.html" : window.location.hash.substring(1, window.location.hash.length);
     var main = document.getElementById ? document.getElementById("main") : document.all["main"];
 
-    if (window.loading) {
+    if (window.loading)
         clearTimeout(window.loading);
-    }
     
     fetchContent("/pages/" + path, function(pageResult) {
         var result = pageResult;
-        if (path.endsWith(".md")) {
+        if (path.endsWith(".md"))
             result = mdtoHTML(pageResult)
-        }
     
-
         main.innerHTML = result;
-        document.title = (main.getElementsByTagName("h1")[0].innerText || main.getElementsByTagName("p")[0].textContent) || "lebestnoob";
+        document.title = (main.getElementsByTagName("h1")[0].innerText || main.getElementsByTagName("p")[0].textContent) || siteConfiguration.title;
 
         if (main.getElementsByTagName("p")[0]) {
             var metaElm  = document.createElement("meta");
@@ -120,7 +119,7 @@ function loadContent() {
             eval(scripts[i].text)
         }
 
-        document.title = document.title != "lebestnoob" ? document.title + " - lebestnoob" : document.title;
+        document.title = document.title != siteConfiguration.title ? document.title + " - " + siteConfiguration.title : document.title;
     }
 
 )}
@@ -163,11 +162,11 @@ var Router = {
         var self = this;
         self.changeRoute();
 
-        if ("onhashchange" in window) {
+        if ("onhashchange" in window) 
             window.onhashchange = function() {
                 self.changeRoute();
-            };
-        } else {
+            }
+        else {
             var lastHash = window.location.hash;
             setInterval(function() {
                 if (window.location.hash != lastHash) {
@@ -216,19 +215,22 @@ function mdtoHTML(str) {
     })
     final = final.replace(/<\/li><\/ul>\n<ul><li>/g, "</li><li>")
 
-
     final = final.replace(orderedListRegex, function(match, p1) {
         return "<ol><li>" + p1 + "</li></ol>";
     })
     final = final.replace(/<\/li><\/ol>\n<ol><li>/g, "</li><li>")
 
+    final = final.replace(headerRegex, function(match, p1, p2){
+        return "<h"+p1.length+">"+p2+"</h"+p1.length+">";
+    })
+
     var chunks = final.split(paragraphRegex);
     var processedArr = [];
     for(var l=0; l<chunks.length; l++){
-        if(chunks[l]==undefined){
+        if(typeof chunks[l] == "undefined" || chunks[l] == ""){
             continue;
         }
-        if(chunks[l].startsWith("#") || chunks[l].startsWith("`") || chunks[l].startsWith("<hr />") || chunks[l].startsWith("<blockquote>")) {
+        if(chunks[l].startsWith("<h") || chunks[l].startsWith("<blockquote>") ) {
             processedArr[processedArr.length] = chunks[l];
             continue;
         }
@@ -236,10 +238,7 @@ function mdtoHTML(str) {
     }
     final = processedArr.join("\n\n");
     
-    final = final.replace(headerRegex, function(match, p1, p2){
-        return "<h"+p1.length+">"+p2+"</h"+p1.length+">";
-    })
-    
+    // in line
     final = final.replace(boldRegex, function(match, p1){
         return "<b>"+p1+"</b>";
     })
@@ -267,6 +266,7 @@ function mdtoHTML(str) {
     return final;
 }
 
+// Polyfills
 if (!String.prototype.startsWith) {
     String.prototype.startsWith = function(searchString, position){
       position = position || 0;
