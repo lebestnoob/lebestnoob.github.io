@@ -193,11 +193,16 @@ function mdtoHTML(str) {
     var unorderedListRegex = /^\s*[-+*]\s+(.+)$/gm;
     var orderedListRegex = /^\s*\d+\.\s+(.+)$/gm;
     
+    var emphasisRegex = /\*\*\*(.+?)\*\*\*|___(.+?)___/gm;
     var paragraphRegex = /^([^#].*)|\n{2,}/g;
     var horizontalLineRegex = /\n?(?:-{3,}|\*{3,}|_{3,})\n/g;
     
     var final = str;
     
+    final = final.replace(emphasisRegex, function(match, p1){
+        return "<em><strong>"+p1+"</strong></em>";
+    })
+
     final = final.replace(horizontalLineRegex, function(match,p1,p2){
         return "<hr />";
     })
@@ -239,12 +244,13 @@ function mdtoHTML(str) {
     final = processedArr.join("\n\n");
     
     // in line
+
     final = final.replace(boldRegex, function(match, p1){
-        return "<b>"+p1+"</b>";
+        return "<strong>"+p1+"</strong>";
     })
     
     final = final.replace(italicRegex, function(match, p1){
-        return "<i>"+p1+"</i>";
+        return "<em>"+p1+"</em>";
     })
     
     final = final.replace(strikeThroughRegex, function(match, p1){

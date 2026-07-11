@@ -11,7 +11,10 @@ Here is some **bold text**
 
 Now it's *italicized*
 
+Why not give it ***both?***
+
 Let's make it ~~strikethrough~~
+
 
 Here is a [hyperlink](https://google.com)
 
