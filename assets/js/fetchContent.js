@@ -12,7 +12,11 @@ function loadTemplate() {
         try {
             templatesList = JSON.parse(content);
         } catch(e) {
-            templatesList = eval('(' + content + ')');
+            try {
+                templatesList = (new Function("return " + content))();
+            } catch(e) {
+                templatesList = eval('(' + content + ')');
+            }
         }
 
         var keys = [];
@@ -43,7 +47,7 @@ function loadTemplate() {
 function doTemplating(currentKey, result){
     var html = document.getElementById ? document.getElementById(currentKey.id) : document.all[currentKey.id];
     if (!html) 
-        return;
+        return alert("Element " + currentKey.id + " doesn't exit!");
 
     if (currentKey.append) {
         if (html.insertAdjacentHTML)
@@ -212,17 +216,88 @@ function mdtoHTML(str) {
     })
 
     final = final.replace(blockQuoteRegex, function(match,p1) {
-        return "<blockquote><p>" + p1 + "</p></blockquote>";
+        if(match.substr(1, match.length).startsWith(">")) {
+            var arr = match.split(">")
+            var layer = 0
+            var str = "";
+            console.log(match, arr)
+            while(!arr[layer]){
+                layer++;
+            }
+            for(var m = 0; m < layer; m++) {
+               str += "<blockquote>"
+            }
+            
+            str += "<blockquote><p>" + arr[layer] + "</p></blockquote>"
+
+            for(var m = 0; m < layer; m++) {
+                str += "</blockquote>"
+            }
+            
+        }
+        return str || "<blockquote><p>" + p1 + "</p></blockquote>";
     })
 
+    final = final.replace(/<\/blockquote>\n<blockquote>/g, "")
+
     final = final.replace(unorderedListRegex, function(match, p1) {
-        return "<ul><li>" + p1 + "</li></ul>";
+         if(match.startsWith(" ") || match.startsWith("&#9;")) {
+            var arr = match.split(" ") || match.split("&#9;");
+            var layer = 0
+            var str = "";
+            while(!arr[layer]){
+                layer++;
+            }
+
+            for(var m = 0; m < layer; m++) {
+               str += "<ul>"
+            }
+            
+            str += "<ul><li>" + p1 + "</li></ul>";
+            
+            for(var m = 0; m < layer; m++) {
+                str += "</ul>"
+            }
+
+        }
+        return str || "<ul><li>" + p1 + "</li></ul>";
     })
     final = final.replace(/<\/li><\/ul>\n<ul><li>/g, "</li><li>")
 
+    var orderRegex;
     final = final.replace(orderedListRegex, function(match, p1) {
-        return "<ol><li>" + p1 + "</li></ol>";
+        if(match.startsWith(" ") || match.startsWith("&#9;")) {
+            var arr = match.split(" ") || match.split("&#9;");
+            var layer = 0;
+            var str = "";
+            var orderedFixRegex = "</li>";
+            while(!arr[layer]){
+                layer++;
+            }
+
+            for(var m = 0; m < layer; m++) {
+               str += "<ol>"
+               orderedFixRegex += "</ol>";
+            }
+            
+            str += "<ol><li>" + p1 + "</li></ol>";
+            orderedFixRegex += "\n";
+            
+            for(var m = 0; m < layer; m++) {
+                str += "</ol>"
+                orderedFixRegex += "<ol>";
+            }
+            orderedFixRegex += "<li>";
+            orderRegex = new RegExp(orderedFixRegex, "g")
+        }
+        
+        return str || "<ol><li>" + p1 + "</li></ol>";
     })
+
+    final = final.replace(/<\/li><\/ol>\n<ol><ol><li>/g, "</li>\n<ol><li>")
+    final = final.replace(/<\/li><\/ol><\/ol>\n<ol><li>/g, "</li></ol>\n<li>")
+    final = final.replace(orderRegex, "</li><li>");
+
     final = final.replace(/<\/li><\/ol>\n<ol><li>/g, "</li><li>")
 
     final = final.replace(headerRegex, function(match, p1, p2){

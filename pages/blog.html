@@ -9,7 +9,11 @@ The land of (not) many ramblings
         try {
             posts = JSON.parse(res);
         } catch(e) {
-            posts = eval(res);
+            try {
+                posts = (new Function("return " + res))();
+            } catch(e) {
+                posts = eval('(' + res + ')');
+            }
         }
 
         posts.sort(compareDates)
@@ -30,7 +34,6 @@ The land of (not) many ramblings
                 "<h2>"+posts[j].title+"</h2>" + 
                 posts[j].desc+"<br/>" + "<small>"+posts[j].author + " | " + dateInfo + "</small>" +
                 "</a>";
-
         }
     });
 </script>
