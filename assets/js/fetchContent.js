@@ -194,8 +194,8 @@ function mdtoHTML(str) {
     var codeRegex = /`(.+?)`/gm;
 
     var blockQuoteRegex = /^>\s*(.+)$/gm; // single-level quotes only
-    var unorderedListRegex = /^\s*[-+*]\s+(.+)$/gm;
-    var orderedListRegex = /^(\s*)\d+\.\s+(.+)$/gm;
+    var unorderedListRegex = /^(\s*)[-+*]\s+(.+)$/gm;
+    var orderedListRegex = /^(\s*)(\d)+\.\s+(.+)$/gm;
     
     var emphasisRegex = /\*\*\*(.+?)\*\*\*|___(.+?)___/gm;
     var paragraphRegex = /^([^#].*)|\n{2,}/g;
@@ -237,82 +237,88 @@ function mdtoHTML(str) {
         return str || "<blockquote><p>" + p1 + "</p></blockquote>";
     })
 
-    final = final.replace(/<\/blockquote>\n<blockquote>/g, "")
+    final = final.replace(/<\/blockquote>\s<blockquote>/g, "")
 
-    final = final.replace(unorderedListRegex, function(match, p1) {
-         if(match.startsWith(" ") || match.startsWith("&#9;")) {
-            var arr = match.split(" ") || match.split("&#9;");
-            var layer = 0
-            var str = "";
-            while(!arr[layer]){
-                layer++;
-            }
+    function nestedElements(target) {
+        var child = (target == "ul" || target == "ol") ? "li" : "p";
+        var depth = [];
 
-            for(var m = 0; m < layer; m++) {
-               str += "<ul>"
-            }
-            
-            str += "<ul><li>" + p1 + "</li></ul>";
-            
-            for(var m = 0; m < layer; m++) {
-                str += "</ul>"
-            }
-
+        var regex;
+        if (target == "ol") {
+            regex = orderedListRegex;
+        } else if (target == "ul") {
+            regex = unorderedListRegex
+        } else {
+            regex = blockQuoteRegex;
         }
-        return str || "<ul><li>" + p1 + "</li></ul>";
-    })
-    final = final.replace(/<\/li><\/ul>\n<ul><li>/g, "</li><li>")
-
-    var depth = [];
-    final = final.replace(orderedListRegex, function(match, p1, p2) {
-        depth[depth.length] = { depth: p1.length, content: p2 };
         
-        if(depth[0] != 0)
-            depth[0].depth = 0; // always has to be zero!
+        var index = 0;
+        final = final.replace(regex, function(match, p1, p2, p3) {
+            
+            if(!isNaN(p2) && p2 == 1 && match.startsWith("\n1.")) {
+                index++;
+            }
 
-        return "REPLACEMEOL\n";
-    })
+            depth[depth.length] = { depth: p1.length, content: typeof p3 === "string" ? p3 : p2, index:index };
+            
+            return "{REPLACEME"+target+index+"}\n";
+        })
+        
+        for (var i = 0; i <= index; i++) {
+            var currentDepth = -1;
+            var ol="";
+            
+            // .filter();
+            var currentGroup = [];
+            for (var d = 0; d < depth.length; d++) {
+                if (depth[d].index === i) {
+                    currentGroup[currentGroup.length] = depth[d];
+                }
+            }
 
-    var ol="";
-    var currentDepth = -1;
-    // if(depth[m].depth == 0){
-        // ol += "<ol>"
-    // }
-    for(var m = 0; m< depth.length; m++){
-        console.log(depth[m])
+            if (currentGroup.length > 0) {
+                var seenDepths = [];
+                for (var w = 0; w < currentGroup.length; w++) {
+                    var dVal = currentGroup[w].depth;
+                    if (seenDepths.indexOf(dVal) === -1) {
+                        seenDepths[seenDepths.length] = dVal;
+                    }
+                    // Re-assign depth to its sequential index (0, 1, 2...)
+                    currentGroup[w].depth = seenDepths.indexOf(dVal);
+                 }
+             }
 
+            for(var m = 0; m< currentGroup.length; m++){
+                    while(currentDepth < currentGroup[m].depth) {
+                        ol += "<"+target+">"
+                        currentDepth++;
+                    }
 
-        while(currentDepth < depth[m].depth) {
-            ol += "<ol>"
-            currentDepth++;
+                    while(currentDepth > currentGroup[m].depth) {
+                        ol += "</"+target+">"
+                        currentDepth--;
+                    }
+
+                    ol += "<"+child+">" + currentGroup[m].content + "</"+child+">";
+                }
+
+            while (currentDepth >= 0){
+                ol += "</"+target+">";
+                currentDepth--;
+            } 
+
+            var regexp = new RegExp("{REPLACEME" + target + i + "}\n")
+            var regexpg = new RegExp("{REPLACEME" + target + i + "}\n", "g")
+
+            final = final.replace(regexp, ol);
+            final = final.replace(regexpg, function (match, p1){
+                return "";
+            });
         }
-
-        while(currentDepth > depth[m].depth) {
-            ol += "</ol>"
-            currentDepth--;
-        }
-
-        ol += "<li>" + depth[m].content + "</li>";
     }
 
-    console.log(currentDepth)
-    while (currentDepth >= 0){
-        ol += "</ol>";
-        currentDepth--;
-    } 
-
-    final = final.replace(/REPLACEMEOL\s/, ol);
-     final = final.replace(/REPLACEMEOL\s/g, function (match, p1){
-        return "";
-    });
-
-
-
-
-
-
-
-
+    nestedElements("ul")
+    nestedElements("ol")
 
     final = final.replace(headerRegex, function(match, p1, p2){
         return "<h"+p1.length+">"+p2+"</h"+p1.length+">";
