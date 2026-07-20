@@ -59,7 +59,7 @@ Ordered List:
  1. Sub-Item 2
  2. Sub-Item 3
   1. Sub-Sub-Item 1
-  2. Sub-Sub-Item 2 (Don't look too closely)
+  2. Sub-Sub-Item 2
 
 
 Horizontal Line:

@@ -195,7 +195,7 @@ function mdtoHTML(str) {
 
     var blockQuoteRegex = /^>\s*(.+)$/gm; // single-level quotes only
     var unorderedListRegex = /^\s*[-+*]\s+(.+)$/gm;
-    var orderedListRegex = /^\s*\d+\.\s+(.+)$/gm;
+    var orderedListRegex = /^(\s*)\d+\.\s+(.+)$/gm;
     
     var emphasisRegex = /\*\*\*(.+?)\*\*\*|___(.+?)___/gm;
     var paragraphRegex = /^([^#].*)|\n{2,}/g;
@@ -220,7 +220,6 @@ function mdtoHTML(str) {
             var arr = match.split(">")
             var layer = 0
             var str = "";
-            console.log(match, arr)
             while(!arr[layer]){
                 layer++;
             }
@@ -264,41 +263,56 @@ function mdtoHTML(str) {
     })
     final = final.replace(/<\/li><\/ul>\n<ul><li>/g, "</li><li>")
 
-    var orderRegex;
-    final = final.replace(orderedListRegex, function(match, p1) {
-        if(match.startsWith(" ") || match.startsWith("&#9;")) {
-            var arr = match.split(" ") || match.split("&#9;");
-            var layer = 0;
-            var str = "";
-            var orderedFixRegex = "</li>";
-            while(!arr[layer]){
-                layer++;
-            }
-
-            for(var m = 0; m < layer; m++) {
-               str += "<ol>"
-               orderedFixRegex += "</ol>";
-            }
-            
-            str += "<ol><li>" + p1 + "</li></ol>";
-            orderedFixRegex += "\n";
-            
-            for(var m = 0; m < layer; m++) {
-                str += "</ol>"
-                orderedFixRegex += "<ol>";
-            }
-            orderedFixRegex += "<li>";
-            orderRegex = new RegExp(orderedFixRegex, "g")
-        }
+    var depth = [];
+    final = final.replace(orderedListRegex, function(match, p1, p2) {
+        depth[depth.length] = { depth: p1.length, content: p2 };
         
-        return str || "<ol><li>" + p1 + "</li></ol>";
+        if(depth[0] != 0)
+            depth[0].depth = 0; // always has to be zero!
+
+        return "REPLACEMEOL\n";
     })
 
-    final = final.replace(/<\/li><\/ol>\n<ol><ol><li>/g, "</li>\n<ol><li>")
-    final = final.replace(/<\/li><\/ol><\/ol>\n<ol><li>/g, "</li></ol>\n<li>")
-    final = final.replace(orderRegex, "</li><li>");
+    var ol="";
+    var currentDepth = -1;
+    // if(depth[m].depth == 0){
+        // ol += "<ol>"
+    // }
+    for(var m = 0; m< depth.length; m++){
+        console.log(depth[m])
 
-    final = final.replace(/<\/li><\/ol>\n<ol><li>/g, "</li><li>")
+
+        while(currentDepth < depth[m].depth) {
+            ol += "<ol>"
+            currentDepth++;
+        }
+
+        while(currentDepth > depth[m].depth) {
+            ol += "</ol>"
+            currentDepth--;
+        }
+
+        ol += "<li>" + depth[m].content + "</li>";
+    }
+
+    console.log(currentDepth)
+    while (currentDepth >= 0){
+        ol += "</ol>";
+        currentDepth--;
+    } 
+
+    final = final.replace(/REPLACEMEOL\s/, ol);
+     final = final.replace(/REPLACEMEOL\s/g, function (match, p1){
+        return "";
+    });
+
+
+
+
+
+
+
+
 
     final = final.replace(headerRegex, function(match, p1, p2){
         return "<h"+p1.length+">"+p2+"</h"+p1.length+">";
