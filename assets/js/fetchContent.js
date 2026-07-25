@@ -107,8 +107,9 @@ function loadContent() {
             result = mdtoHTML(pageResult)
     
         main.innerHTML = result;
+        
         document.title = (main.getElementsByTagName("h1")[0].innerText || main.getElementsByTagName("h1")[0].textContent) || siteConfiguration.title;
-
+        
         if (main.getElementsByTagName("p")[0]) {
             var metaElm  = document.createElement("meta");
             metaElm.name = "description";
@@ -122,7 +123,7 @@ function loadContent() {
         for(var i=0; i<scripts.length; i++) {
             eval(scripts[i].text)
         }
-
+        
         document.title = document.title != siteConfiguration.title ? document.title + " - " + siteConfiguration.title : document.title;
     })
 
@@ -315,23 +316,23 @@ function mdtoHTML(str) {
     nestedElements("ul")
     nestedElements("ol")
 
-    final = final.replace(headerRegex, function(match, p1, p2){
-        return "<h"+p1.length+">"+p2+"</h"+p1.length+">";
-    })
-
     var chunks = final.split(paragraphRegex);
     var processedArr = [];
     for(var l=0; l<chunks.length; l++){
         if(typeof chunks[l] == "undefined" || chunks[l] == ""){
             continue;
         }
-        if(chunks[l].startsWith("<h") || chunks[l].startsWith("<blockquote>") ) {
+        if(chunks[l].startsWith("#") || chunks[l].startsWith("<blockquote>") ) {
             processedArr[processedArr.length] = chunks[l];
             continue;
         }
         processedArr[processedArr.length] = "<p>" + chunks[l] + "</p>";
     }
     final = processedArr.join("\n\n");
+
+     final = final.replace(headerRegex, function(match, p1, p2){
+        return "\n<h"+p1.length+">"+p2+"</h"+p1.length+">";
+    })
     
     // in line
 
