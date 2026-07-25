@@ -1,21 +1,85 @@
-<h1>Hello there!</h1>
-<p>Welcome to lebestnoob's site. I don't have many projects, but you can see the ones I do have here. By all means, I am not the best coder, so expect messy code from me.</p>
-<h3>Projects</h3>
-<ul>
-    <li><a href="//github.com/lebestnoob/meta-dm-parser">Meta DM Parser</a></li>
-    <li><a href="//github.com/lebestnoob/instagram-client">Instagram Client (WIP)</a></li>
-    <li><a href="//github.com/lebestnoob/ya-opendir">Yandex Disk Open Directory</a></li>
-    <li><a href="//github.com/lebestnoob/minecraft-textures-proxy">Minecraft Textures Proxy</a></li>
-</ul>
+<h1 id="reveal">Hello there!</h1>
 
-<details>
-  <summary><strong>Past Works</strong></summary>
-  <p>Projects I'm no longer maintaining.</p>
+<h2 id="nextPayload">I am <span id="font-changer">lebestnoob</span>,</h2>
+<div id="hidden">
+    <h3>Hobbyist Developer</h3>
+    <p>Welcome to lebestnoob's site. I don't have many projects, but you can see the ones I do have here. Eexpect very messy code from me.</p>
+    <h3>Projects</h3>
     <ul>
-        <li><a href="//github.com/lebestnoob/cwc-bypass">CWC Bypass (Archived)</a></li>
-        <li><a href="//github.com/lebestnoob/Windify">Windify (Archived)</a></li>
+        <li><a href="//github.com/lebestnoob/meta-dm-parser">Meta DM Parser</a></li>
+        <li><a href="//github.com/lebestnoob/instagram-client">Instagram Client (WIP)</a></li>
+        <li><a href="//github.com/lebestnoob/ya-opendir">Yandex Disk Open Directory</a></li>
+        <li><a href="//github.com/lebestnoob/minecraft-textures-proxy">Minecraft Textures Proxy</a></li>
     </ul>
-</details>
+
+    <details>
+    <summary><strong>Past Works</strong></summary>
+    <p>Projects I'm no longer maintaining.</p>
+        <ul>
+            <li><a href="//github.com/lebestnoob/cwc-bypass">CWC Bypass (Archived)</a></li>
+            <li><a href="//github.com/lebestnoob/Windify">Windify (Archived)</a></li>
+        </ul>
+    </details>
+</div>
 
 
 <script>document.title = "lebestnoob";</script>
+<script>
+    var reveal = document.getElementById("reveal");
+    reveal.style.opacity = 0;
+    reveal.style.filter = 'alpha(opacity=0)';
+    var nextPayload = document.getElementById("nextPayload");
+    nextPayload.style.opacity = 0;
+    nextPayload.style.filter = 'alpha(opacity=0)';
+    var hidden = document.getElementById("hidden");
+    hidden.style.opacity = 0;
+    hidden.style.filter = 'alpha(opacity=0)';
+
+    // Source - https://stackoverflow.com/a/6121270
+    // Posted by Ibu, modified by community. See post 'Timeline' for change history
+    // Retrieved 2026-07-24, License - CC BY-SA 3.0
+    var fadeHasFinished = false;
+    function unfade(element) {
+        var op = 0.01;  // initial opacity
+        var timer = setInterval(function () {
+            if (op >= 1){
+                if(!fadeHasFinished) {
+                    unfade(nextPayload);
+                    changeFont();
+                }
+                clearInterval(timer);
+                fadeHasFinished = true;
+            }
+          
+            element.style.opacity = op;
+            element.style.filter = 'alpha(opacity=' + op * 100 + ")";
+            op += op * 0.06;
+        }, 10);
+    }
+
+    unfade(reveal)
+
+    function changeFont() {
+        var fontChanger = document.getElementById("font-changer");
+        var fontFamilies = ["Arial, Helvetica, sans-serif", "Arial Black, Gadget, sans-serif", "Comic Sans MS, cursive", "Courier New, monospace", "Georgia, serif", "Impact, Charcoal, sans-serif", "Lucida Console, Monaco, monospace", "Lucida Sans Unicode, Lucida Grande, sans-serif", "Palatino Linotype, Book Antiqua, Palatino, serif", "Tahoma, Geneva, sans-serif", "Times New Roman, Times, serif", "Trebuchet MS, sans-serif", "Verdana, Geneva, sans-serif", "Symbol, Symbol", "MS Sans Serif, Geneva, sans-serif", "MS Serif, New York, serif"];
+        var textDecorations = ["underline", "overline", "line-through", "blink", "none"];
+        var randomFontPick = Math.floor(Math.random()*fontFamilies.length);
+        var randomDecorationPick = Math.floor(Math.random()*textDecorations.length);
+
+        var currentFont = fontFamilies[randomFontPick];
+            change = setInterval(function(){
+                var font = fontFamilies[randomFontPick];
+                randomFontPick = Math.floor(Math.random()*fontFamilies.length);
+                randomDecorationPick = Math.floor(Math.random()*textDecorations.length);
+                while(font == currentFont) {
+                    randomFontPick = Math.floor(Math.random()*fontFamilies.length);
+                    font = fontFamilies[randomFontPick];
+                }
+                currentFont = font;
+                fontChanger.style.fontFamily = font;
+                fontChanger.style.textDecoration = textDecorations[randomDecorationPick];
+            }, 250);
+        
+        setTimeout(function(){unfade(hidden)}, 500);
+    }
+</script>

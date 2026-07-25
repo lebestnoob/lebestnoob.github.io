@@ -124,9 +124,29 @@ function loadContent() {
         }
 
         document.title = document.title != siteConfiguration.title ? document.title + " - " + siteConfiguration.title : document.title;
+    })
+
+    main.style.opacity = 0;
+    main.style.filter = 'alpha(opacity=0)';
+
+    // Source - https://stackoverflow.com/a/6121270
+    // Posted by Ibu, modified by community. See post 'Timeline' for change history
+    // Retrieved 2026-07-24, License - CC BY-SA 3.0
+    function unFade(element) {
+        var op = 0.01;  // initial opacity
+        var timer = setInterval(function () {
+            if (op >= 1){
+                clearInterval(timer);
+            }
+   
+            element.style.opacity = op;
+            element.style.filter = 'alpha(opacity=' + op * 100 + ")";
+            op += op * 0.06;
+        }, 10);
     }
 
-)}
+    unFade(main, 0.06)
+}
 
 
 var Router = {
@@ -259,18 +279,15 @@ function mdtoHTML(str) {
             if(target == "ol" && (match.startsWith("\n1.") || match.startsWith("1. ")))
                 index++;
 
-            
             depth[depth.length] = { depth: p1.length, content: typeof p3 === "string" ? p3 : p2, index:index };
             
             depth[0].depth = 0;
             var placeholder = "{REPLACEME"+target+index+"}\n";
             
-            if(target == "ul" && final.indexOf(match + "\n\n")) {
+            if(target == "ul" && final.indexOf(match + "\n\n"))
                 index++;
-            }
 
             return placeholder;
-
         })
 
         for (var i = 0; i <= index; i++) {
