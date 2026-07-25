@@ -125,9 +125,9 @@ function loadContent() {
         }
         
         document.title = document.title != siteConfiguration.title ? document.title + " - " + siteConfiguration.title : document.title;
+        Animator(main).fadeIn({delay: 7});
     })
 
-    Animator(main).fadeIn({delay: 7});
 }
 
 
