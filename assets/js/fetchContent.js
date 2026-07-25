@@ -404,16 +404,23 @@ Animator.prototype.fadeIn = function(arg, callback){
     }, params.delay);
 }
 
-Animator.prototype.cycleFonts = function(list) {
-    var fontFamilies = ["Arial, Helvetica, sans-serif", "Arial Black, Gadget, sans-serif", "Comic Sans MS, cursive", "Courier New, monospace", "Georgia, serif", "Impact, Charcoal, sans-serif", "Lucida Console, Monaco, monospace", "Lucida Sans Unicode, Lucida Grande, sans-serif", "Palatino Linotype, Book Antiqua, Palatino, serif", "Tahoma, Geneva, sans-serif", "Times New Roman, Times, serif", "Trebuchet MS, sans-serif", "Verdana, Geneva, sans-serif", "Symbol, Symbol", "MS Sans Serif, Geneva, sans-serif", "MS Serif, New York, serif"];
-    if (list instanceof Array && list.length > 0)
-        fontFamilies = list;
+// callback is never reached if timeout is not specified
+Animator.prototype.cycleFonts = function(arg, callback) {
+    if (typeof arg === "function") {
+        callback = arg;
+        arg = {};
+    }
+
+    var params = {"list": arg && arg.list ? arg.list : ["Arial, Helvetica, sans-serif", "Arial Black, Gadget, sans-serif", "Comic Sans MS, cursive", "Courier New, monospace", "Georgia, serif", "Impact, Charcoal, sans-serif", "Lucida Console, Monaco, monospace", "Lucida Sans Unicode, Lucida Grande, sans-serif", "Palatino Linotype, Book Antiqua, Palatino, serif", "Tahoma, Geneva, sans-serif", "Times New Roman, Times, serif", "Trebuchet MS, sans-serif", "Verdana, Geneva, sans-serif", "Symbol, Symbol", "MS Sans Serif, Geneva, sans-serif", "MS Serif, New York, serif"], timeout: arg && arg.timeout ? arg.timeout : undefined };
+    var fontFamilies = params.list;
+    if (params.list instanceof Array && params.list.length > 0)
+        fontFamilies = params.list;
 
     var element = this.element;
     var randomPick = Math.floor(Math.random()*fontFamilies.length);
 
     var currentFont = fontFamilies[randomPick];
-    change = setInterval(function(){
+    var change = setInterval(function(){
         var font = fontFamilies[randomPick];
         randomPick = Math.floor(Math.random()*fontFamilies.length);
         while(font == currentFont) {
@@ -423,21 +430,41 @@ Animator.prototype.cycleFonts = function(list) {
         currentFont = font;
         element.style.fontFamily = font;
     }, 250);
-    
+
+    if (params.timeout && typeof params.timeout === "number") {
+        setTimeout(function(){
+            clearInterval(change);
+            typeof callback === "function" ? callback.call(element) : null;
+        }, params.timeout);
+    }
 }
 
-Animator.prototype.cycleDecorations = function(list){
-    var textDecorations = ["underline", "overline", "line-through", "blink", "none"];
-    if (list instanceof Array && list.length > 0)
-        textDecorations = list;
-
+// callback is never reached if timeout is not specified
+Animator.prototype.cycleDecorations = function(arg, callback){
+    if (typeof arg === "function") {
+        callback = arg;
+        arg = {};
+    }
+    
+    var params = {"list": arg && arg.list ? arg.list : ["underline", "overline", "line-through", "blink", "none"], timeout: arg && arg.timeout ? arg.timeout : undefined };
+    var textDecorations = params.list;
+    if (params.list instanceof Array && params.list.length > 0)
+        textDecorations = params.list;
+    
     var element = this.element;
     var randomPick = Math.floor(Math.random()*textDecorations.length);
-
-    change = setInterval(function(){
+    
+    var change = setInterval(function(){
         randomPick = Math.floor(Math.random()*textDecorations.length);
         element.style.textDecoration = textDecorations[randomPick];
     }, 250);
+
+    if (params.timeout && typeof params.timeout === "number") {
+        setTimeout(function(){
+            clearInterval(change);
+            typeof callback === "function" ? callback.call(element) : null;
+        }, params.timeout);
+    }
 }
 
 Animator.prototype.scaleDown = function(arg, callback){
@@ -461,7 +488,6 @@ Animator.prototype.scaleDown = function(arg, callback){
     }
 
     if(originalSize.endsWith("em")){
-        console.log("hello")
         originalSize = originalSize.slice(0, originalSize.length-2) * 16; // we will assume its 16px
     } else {
         originalSize = originalSize.slice(0, originalSize.length-2);
