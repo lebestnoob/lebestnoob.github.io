@@ -364,8 +364,8 @@ function mdtoHTML(str) {
 }
 
 function Animator(element) {
-    if(!element || (typeof element != "object" ))
-        return alert("Animator(), Invalid input");
+    if(!element || (typeof element != "object" && element.nodeType !== 1))
+        return alert("Animator(), Input is not an HTML Element!");
 
     if(!(this instanceof Animator))
         return new Animator(element);
@@ -520,10 +520,4 @@ if (!String.prototype.endsWith) {
         strtLength = (strtLength === undefined || strtLength > this.length)? this.length : strtLength;  	
         return this.substr(strtLength - searchString.length, strtLength) === searchString;
   };
-}
-
-function getValue(id){
-    var div = document.getElementById(id);
-    div.style.height = '1em';
-    return ( div.offsetHeight );
 }
