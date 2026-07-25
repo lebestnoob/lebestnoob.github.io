@@ -253,17 +253,26 @@ function mdtoHTML(str) {
         }
         
         var index = 0;
+        var first = 0;
         final = final.replace(regex, function(match, p1, p2, p3) {
             
-            if(!isNaN(p2) && p2 == 1 && match.startsWith("\n1.")) {
+            if(target == "ol" && (match.startsWith("\n1.") || match.startsWith("1. ")))
+                index++;
+
+            
+            depth[depth.length] = { depth: p1.length, content: typeof p3 === "string" ? p3 : p2, index:index };
+            
+            depth[0].depth = 0;
+            var placeholder = "{REPLACEME"+target+index+"}\n";
+            
+            if(target == "ul" && final.indexOf(match + "\n\n")) {
                 index++;
             }
 
-            depth[depth.length] = { depth: p1.length, content: typeof p3 === "string" ? p3 : p2, index:index };
-            
-            return "{REPLACEME"+target+index+"}\n";
+            return placeholder;
+
         })
-        
+
         for (var i = 0; i <= index; i++) {
             var currentDepth = -1;
             var ol="";
@@ -275,19 +284,7 @@ function mdtoHTML(str) {
                     currentGroup[currentGroup.length] = depth[d];
                 }
             }
-
-            if (currentGroup.length > 0) {
-                var seenDepths = [];
-                for (var w = 0; w < currentGroup.length; w++) {
-                    var dVal = currentGroup[w].depth;
-                    if (seenDepths.indexOf(dVal) === -1) {
-                        seenDepths[seenDepths.length] = dVal;
-                    }
-                    // Re-assign depth to its sequential index (0, 1, 2...)
-                    currentGroup[w].depth = seenDepths.indexOf(dVal);
-                 }
-             }
-
+            
             for(var m = 0; m< currentGroup.length; m++){
                     while(currentDepth < currentGroup[m].depth) {
                         ol += "<"+target+">"

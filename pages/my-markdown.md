@@ -45,9 +45,9 @@ Unordered List:
 
 * Item 1
  * It works here
-* Item 3
- * Sub-Item
 * Item 2
+ * Sub-Item
+* Item 3
  * ha!
 
 Ordered List:
@@ -67,9 +67,18 @@ Another list:
 2. Other Item 2
 3. Other Item 3
  1. Other Sub-Item 2
- 2. Other Sub-Item 3
+ 2. Other Sub-Item 2
   1. Other Sub-Sub-Item 1
   2. Other Sub-Sub-Item 2
+
+Another unorganized list:
+* Another Item 1
+ * It works here
+* Another Item 2
+ * Another Sub-Item
+* Item 3... You get it already, don't you? 
+ * wowses
+* You expect Item 4, but not it is I, Item 5!
 
 Horizontal Line:
 ___
