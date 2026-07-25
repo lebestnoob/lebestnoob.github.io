@@ -107,7 +107,7 @@ function loadContent() {
             result = mdtoHTML(pageResult)
     
         main.innerHTML = result;
-        document.title = (main.getElementsByTagName("h1")[0].innerText || main.getElementsByTagName("p")[0].textContent) || siteConfiguration.title;
+        document.title = (main.getElementsByTagName("h1")[0].innerText || main.getElementsByTagName("h1")[0].textContent) || siteConfiguration.title;
 
         if (main.getElementsByTagName("p")[0]) {
             var metaElm  = document.createElement("meta");
@@ -126,26 +126,7 @@ function loadContent() {
         document.title = document.title != siteConfiguration.title ? document.title + " - " + siteConfiguration.title : document.title;
     })
 
-    main.style.opacity = 0;
-    main.style.filter = 'alpha(opacity=0)';
-
-    // Source - https://stackoverflow.com/a/6121270
-    // Posted by Ibu, modified by community. See post 'Timeline' for change history
-    // Retrieved 2026-07-24, License - CC BY-SA 3.0
-    function unFade(element) {
-        var op = 0.01;  // initial opacity
-        var timer = setInterval(function () {
-            if (op >= 1){
-                clearInterval(timer);
-            }
-   
-            element.style.opacity = op;
-            element.style.filter = 'alpha(opacity=' + op * 100 + ")";
-            op += op * 0.06;
-        }, 10);
-    }
-
-    unFade(main, 0.06)
+    Animator(main).fadeIn({delay: 7});
 }
 
 
@@ -381,6 +362,124 @@ function mdtoHTML(str) {
     return final;
 }
 
+function Animator(element) {
+    if(!element || (typeof element != "object" ))
+        return alert("Animator(), Invalid input");
+
+    if(!(this instanceof Animator))
+        return new Animator(element);
+
+    this.element = element;
+};
+
+Animator.prototype.fadeIn = function(arg, callback){
+    if (typeof arg === "function") {
+        callback = arg;
+        arg = {};
+    }
+    
+    var params = {
+        rate: arg && arg.rate ? arg.rate : 0.06,
+        delay: arg && arg.delay ? arg.delay : 10
+    }
+    var element = this.element;
+
+    element.style.opacity = 0;
+    element.style.filter = 'alpha(opacity=0)';
+    // Source - https://stackoverflow.com/a/6121270
+    // Posted by Ibu, modified by community and lebestnoob. See post 'Timeline' for change history
+    // Retrieved 2026-07-24, License - CC BY-SA 3.0
+    var op = 0.01;  // initial opacity
+    var timer = setInterval(function () {
+        if (op >= 1){
+            op = 1;
+            clearInterval(timer);
+            typeof callback === "function" ? callback.call(element) : null;
+        }
+        
+        element.style.opacity = op;
+        element.style.filter = 'alpha(opacity=' + op * 100 + ")";
+        op += op * params.rate;
+    }, params.delay);
+}
+
+Animator.prototype.cycleFonts = function(list) {
+    var fontFamilies = ["Arial, Helvetica, sans-serif", "Arial Black, Gadget, sans-serif", "Comic Sans MS, cursive", "Courier New, monospace", "Georgia, serif", "Impact, Charcoal, sans-serif", "Lucida Console, Monaco, monospace", "Lucida Sans Unicode, Lucida Grande, sans-serif", "Palatino Linotype, Book Antiqua, Palatino, serif", "Tahoma, Geneva, sans-serif", "Times New Roman, Times, serif", "Trebuchet MS, sans-serif", "Verdana, Geneva, sans-serif", "Symbol, Symbol", "MS Sans Serif, Geneva, sans-serif", "MS Serif, New York, serif"];
+    if (list instanceof Array && list.length > 0)
+        fontFamilies = list;
+
+    var element = this.element;
+    var randomPick = Math.floor(Math.random()*fontFamilies.length);
+
+    var currentFont = fontFamilies[randomPick];
+    change = setInterval(function(){
+        var font = fontFamilies[randomPick];
+        randomPick = Math.floor(Math.random()*fontFamilies.length);
+        while(font == currentFont) {
+            randomPick = Math.floor(Math.random()*fontFamilies.length);
+            font = fontFamilies[randomPick];
+        }
+        currentFont = font;
+        element.style.fontFamily = font;
+    }, 250);
+    
+}
+
+Animator.prototype.cycleDecorations = function(list){
+    var textDecorations = ["underline", "overline", "line-through", "blink", "none"];
+    if (list instanceof Array && list.length > 0)
+        textDecorations = list;
+
+    var element = this.element;
+    var randomPick = Math.floor(Math.random()*textDecorations.length);
+
+    change = setInterval(function(){
+        randomPick = Math.floor(Math.random()*textDecorations.length);
+        element.style.textDecoration = textDecorations[randomPick];
+    }, 250);
+}
+
+Animator.prototype.scaleDown = function(arg, callback){
+    if (typeof arg === "function") {
+        callback = arg;
+        arg = {};
+    }
+    
+    var params = {
+        rate: arg && arg.rate ? arg.rate : 0.06,
+        delay: arg && arg.delay ? arg.delay : 10,
+        multiplier: arg && arg.multiplier ? arg.multiplier : 4
+    }
+    
+    var element = this.element;
+    var originalSize;
+    if (typeof getComputedStyle !== "undefined")
+        originalSize = getComputedStyle(element).fontSize;
+    else {
+        originalSize = element.currentStyle["fontSize"]
+    }
+
+    if(originalSize.endsWith("em")){
+        console.log("hello")
+        originalSize = originalSize.slice(0, originalSize.length-2) * 16; // we will assume its 16px
+    } else {
+        originalSize = originalSize.slice(0, originalSize.length-2);
+    }
+
+    var size = originalSize * params.multiplier; 
+
+    var timer = setInterval(function () {
+        if (size <= originalSize){
+            op = originalSize;
+            clearInterval(timer);
+            typeof callback === "function" ? callback.call(element) : null;
+        }
+        
+        element.style.fontSize = size + "px";
+        size -= Math.round(size * params.rate);
+    }, params.delay);
+}
+
 // Polyfills
 if (!String.prototype.startsWith) {
     String.prototype.startsWith = function(searchString, position){
@@ -394,4 +493,10 @@ if (!String.prototype.endsWith) {
         strtLength = (strtLength === undefined || strtLength > this.length)? this.length : strtLength;  	
         return this.substr(strtLength - searchString.length, strtLength) === searchString;
   };
+}
+
+function getValue(id){
+    var div = document.getElementById(id);
+    div.style.height = '1em';
+    return ( div.offsetHeight );
 }
