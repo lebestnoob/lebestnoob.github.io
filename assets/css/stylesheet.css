@@ -9,7 +9,7 @@ body {
     overflow-wrap: break-word;
     font-size: 16px;
     line-height: 1.4;
-    background-color: white;
+    background-color: rgb(251, 248, 247);
     color: black;
 }
 
@@ -19,7 +19,7 @@ a {
 }
 
 a:link, a:visited, a:focus, a:hover, a:active {
-    color: #2065DF;
+    color: #1950AE;
 }
 
 a:hover {
