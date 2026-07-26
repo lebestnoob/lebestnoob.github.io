@@ -416,9 +416,17 @@ Animator.prototype.cycleFonts = function(arg, callback) {
     if (params.list instanceof Array && params.list.length > 0)
         fontFamilies = params.list;
 
+    
     var element = this.element;
     var randomPick = Math.floor(Math.random()*fontFamilies.length);
 
+    var originalState;
+    if (typeof getComputedStyle !== "undefined")
+        originalState = getComputedStyle(element).fontFamily;
+    else {
+        originalState = element.currentStyle["fontFamily"]
+    }
+    
     var currentFont = fontFamilies[randomPick];
     var change = setInterval(function(){
         var font = fontFamilies[randomPick];
@@ -434,6 +442,7 @@ Animator.prototype.cycleFonts = function(arg, callback) {
     if (params.timeout && typeof params.timeout === "number") {
         setTimeout(function(){
             clearInterval(change);
+            element.style.fontFamily = originalState;
             typeof callback === "function" ? callback.call(element) : null;
         }, params.timeout);
     }
@@ -454,6 +463,13 @@ Animator.prototype.cycleDecorations = function(arg, callback){
     var element = this.element;
     var randomPick = Math.floor(Math.random()*textDecorations.length);
     
+    var originalState;
+    if (typeof getComputedStyle !== "undefined")
+        originalState = getComputedStyle(element).textDecoration;
+    else {
+        originalState = element.currentStyle["textDecoration"]
+    }
+    
     var change = setInterval(function(){
         randomPick = Math.floor(Math.random()*textDecorations.length);
         element.style.textDecoration = textDecorations[randomPick];
@@ -462,6 +478,7 @@ Animator.prototype.cycleDecorations = function(arg, callback){
     if (params.timeout && typeof params.timeout === "number") {
         setTimeout(function(){
             clearInterval(change);
+            element.style.textDecoration = originalState;
             typeof callback === "function" ? callback.call(element) : null;
         }, params.timeout);
     }
