@@ -486,12 +486,7 @@ Animator.prototype.scaleDown = function(arg, callback){
     else {
         originalSize = element.currentStyle["fontSize"]
     }
-
-    if(originalSize.endsWith("em")){
-        originalSize = originalSize.slice(0, originalSize.length-2) * 16; // we will assume its 16px
-    } else {
-        originalSize = originalSize.slice(0, originalSize.length-2);
-    }
+    originalSize = getSize(originalSize);
 
     var size = originalSize * params.multiplier; 
 
@@ -520,4 +515,21 @@ if (!String.prototype.endsWith) {
         strtLength = (strtLength === undefined || strtLength > this.length)? this.length : strtLength;  	
         return this.substr(strtLength - searchString.length, strtLength) === searchString;
   };
+}
+
+// Source - https://stackoverflow.com/a/67349803
+// Posted by dVVIIb, modified by community. See post 'Timeline' for change history
+// Retrieved 2026-07-25, License - CC BY-SA 4.0
+
+function getSize(size) {
+    var l = document.createElement('div');
+    l.style.visibility = 'hidden';
+    l.style.boxSize = 'content-box';
+    l.style.position = 'absolute';
+    l.style.maxHeight = 'none';
+    l.style.height = size;
+    document.body.appendChild(l);
+    size = l.clientHeight;
+    l.parentNode.removeChild(l);
+    return size;
 }
