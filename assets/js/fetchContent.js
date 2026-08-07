@@ -203,21 +203,19 @@ function mdtoHTML(str) {
     var paragraphRegex = /^([^#].*)|\n{2,}/g;
     var horizontalLineRegex = /\n?(?:-{3,}|\*{3,}|_{3,})\n/g;
     
-    var final = str;
-    
-    final = final.replace(emphasisRegex, function(match, p1){
+    str = str.replace(emphasisRegex, function(match, p1){
         return "<em><strong>"+p1+"</strong></em>";
     })
 
-    final = final.replace(horizontalLineRegex, function(match,p1,p2){
+    str = str.replace(horizontalLineRegex, function(match,p1,p2){
         return "<hr />";
     })
 
-    final = final.replace(codeBlockRegex, function(match,p1,p2){
+    str = str.replace(codeBlockRegex, function(match,p1,p2){
         return "<pre><code>" + p1 + p2 + "</code></pre>";
     })
 
-    final = final.replace(blockQuoteRegex, function(match,p1) {
+    str = str.replace(blockQuoteRegex, function(match,p1) {
         if(match.substr(1, match.length).startsWith(">")) {
             var arr = match.split(">")
             var layer = 0
@@ -239,7 +237,7 @@ function mdtoHTML(str) {
         return str || "<blockquote><p>" + p1 + "</p></blockquote>";
     })
 
-    final = final.replace(/<\/blockquote>\s<blockquote>/g, "")
+    str = str.replace(/<\/blockquote>\s<blockquote>/g, "")
 
     function nestedElements(target) {
         var child = (target == "ul" || target == "ol") ? "li" : "p";
@@ -256,7 +254,7 @@ function mdtoHTML(str) {
         
         var index = 0;
         var first = 0;
-        final = final.replace(regex, function(match, p1, p2, p3) {
+        str = str.replace(regex, function(match, p1, p2, p3) {
             
             if(target == "ol" && (match.startsWith("\n1.") || match.startsWith("1. ")))
                 index++;
@@ -266,7 +264,7 @@ function mdtoHTML(str) {
             depth[0].depth = 0;
             var placeholder = "{REPLACEME"+target+index+"}\n";
             
-            if(target == "ul" && final.indexOf(match + "\n\n"))
+            if(target == "ul" && str.indexOf(match + "\n\n"))
                 index++;
 
             return placeholder;
@@ -306,8 +304,8 @@ function mdtoHTML(str) {
             var regexp = new RegExp("{REPLACEME" + target + i + "}\n")
             var regexpg = new RegExp("{REPLACEME" + target + i + "}\n", "g")
 
-            final = final.replace(regexp, ol);
-            final = final.replace(regexpg, function (match, p1){
+            str = str.replace(regexp, ol);
+            str = str.replace(regexpg, function (match, p1){
                 return "";
             });
         }
@@ -316,7 +314,7 @@ function mdtoHTML(str) {
     nestedElements("ul")
     nestedElements("ol")
 
-    var chunks = final.split(paragraphRegex);
+    var chunks = str.split(paragraphRegex);
     var processedArr = [];
     for(var l=0; l<chunks.length; l++){
         if(typeof chunks[l] == "undefined" || chunks[l] == ""){
@@ -328,39 +326,39 @@ function mdtoHTML(str) {
         }
         processedArr[processedArr.length] = "<p>" + chunks[l] + "</p>";
     }
-    final = processedArr.join("\n\n");
+    str = processedArr.join("\n\n");
 
-     final = final.replace(headerRegex, function(match, p1, p2){
+     str = str.replace(headerRegex, function(match, p1, p2){
         return "\n<h"+p1.length+">"+p2+"</h"+p1.length+">";
     })
     
     // in line
 
-    final = final.replace(boldRegex, function(match, p1){
+    str = str.replace(boldRegex, function(match, p1){
         return "<strong>"+p1+"</strong>";
     })
     
-    final = final.replace(italicRegex, function(match, p1){
+    str = str.replace(italicRegex, function(match, p1){
         return "<em>"+p1+"</em>";
     })
     
-    final = final.replace(strikeThroughRegex, function(match, p1){
+    str = str.replace(strikeThroughRegex, function(match, p1){
         return "<s>"+p1+"</s>";
     })
 
-    final = final.replace(imageRegex, function(match, p1, p2){
+    str = str.replace(imageRegex, function(match, p1, p2){
         return "<img src=\""+ p2 +"\" alt=\"" + p1 + "\">";
     })
     
-    final = final.replace(linkRegex, function(match, p1, p2){
+    str = str.replace(linkRegex, function(match, p1, p2){
         return "<a href=\"" + p2 + "\">" + p1 + "</a>";
     })
 
-    final = final.replace(codeRegex, function(match,p1,p2){
+    str = str.replace(codeRegex, function(match,p1,p2){
         return "<code>" + p1 + "</code>";
     })
 
-    return final;
+    return str;
 }
 
 function Animator(element) {
@@ -374,6 +372,10 @@ function Animator(element) {
 };
 
 Animator.prototype.fadeIn = function(arg, callback){
+    // IE < 8 does not support opacity on non-image elements
+    if(window.document.documentMode && window.document.documentMode < 8)
+        return; 
+   
     if (typeof arg === "function") {
         callback = arg;
         arg = {};
@@ -485,6 +487,13 @@ Animator.prototype.cycleDecorations = function(arg, callback){
 }
 
 Animator.prototype.scaleDown = function(arg, callback){
+    /* 
+        IE < 8 does not support opacity on non-image elements
+        This is a necessary for the scaling animation to look okay
+    */
+    if(window.document.documentMode && window.document.documentMode < 8)
+        return; 
+    
     if (typeof arg === "function") {
         callback = arg;
         arg = {};
