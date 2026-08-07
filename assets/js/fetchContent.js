@@ -373,8 +373,8 @@ function Animator(element) {
 
 Animator.prototype.fadeIn = function(arg, callback){
     // IE < 8 does not support opacity on non-image elements
-    if(window.document.documentMode && window.document.documentMode < 8)
-        return; 
+     if(isIE() < 8)
+        return;
    
     if (typeof arg === "function") {
         callback = arg;
@@ -491,8 +491,8 @@ Animator.prototype.scaleDown = function(arg, callback){
         IE < 8 does not support opacity on non-image elements
         This is a necessary for the scaling animation to look okay
     */
-    if(window.document.documentMode && window.document.documentMode < 8)
-        return; 
+    if(isIE() < 8)
+        return;
     
     if (typeof arg === "function") {
         callback = arg;
@@ -558,4 +558,19 @@ function getSize(size) {
     size = l.clientHeight;
     l.parentNode.removeChild(l);
     return size;
+}
+
+// Source - https://stackoverflow.com/a/15983064
+// Posted by weroro, modified by community. See post 'Timeline' for change history
+// Retrieved 2026-08-06, License - CC BY-SA 3.0
+
+function isIE() {
+    if(navigator.userAgent.indexOf("MSIE") == -1)
+        return 12;
+
+    if("documentMode" in document)
+        return document.documentMode; 
+    
+    var myNav = navigator.userAgent.toLowerCase();
+    return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
 }

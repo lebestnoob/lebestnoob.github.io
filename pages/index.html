@@ -25,30 +25,33 @@
 
 <script>document.title = "lebestnoob";</script>
 <script>
-    var reveal = document.getElementById("reveal");
-    reveal.style.opacity = 0;
-    reveal.style.filter = 'alpha(opacity=0)';
-    var nextPayload = document.getElementById("nextPayload");
-    nextPayload.style.opacity = 0;
-    nextPayload.style.filter = 'alpha(opacity=0)';
-    var hidden = document.getElementById("hidden");
-    hidden.style.opacity = 0;
-    hidden.style.filter = 'alpha(opacity=0)';
     var fontChanger = document.getElementById("change-fonts");
+    Animator(fontChanger).cycleFonts({timeout: 3500});
+    Animator(fontChanger).cycleDecorations({timeout: 4200});
+    
+    if(isIE() >= 8) {
+        var reveal = document.getElementById("reveal");
+        reveal.style.opacity = 0;
+        reveal.style.filter = 'alpha(opacity=0)';
+        var nextPayload = document.getElementById("nextPayload");
+        nextPayload.style.opacity = 0;
+        nextPayload.style.filter = 'alpha(opacity=0)';
+        var hidden = document.getElementById("hidden");
+        hidden.style.opacity = 0;
+        hidden.style.filter = 'alpha(opacity=0)';
 
-    Animator(reveal).scaleDown({multiplier: 4, rate: 0.08, delay: 25});
-    Animator(reveal).fadeIn(function(){
-        Animator(fontChanger).cycleFonts({timeout: 3500});
-        Animator(fontChanger).cycleDecorations({timeout: 4200});
-        setTimeout(function(){
-        Animator(nextPayload).scaleDown({multiplier: 2, rate: 0.08, delay: 30});
-        Animator(nextPayload).fadeIn(function(){
+        Animator(reveal).scaleDown({multiplier: 4, rate: 0.08, delay: 25});
+        Animator(reveal).fadeIn(function(){
             setTimeout(function(){
-                Animator(hidden).scaleDown({multiplier: 1.5, rate: 0.08, delay: 30});
-                Animator(hidden).fadeIn({ delay: 5})
-            }, 150);
+            Animator(nextPayload).scaleDown({multiplier: 2, rate: 0.08, delay: 30});
+            Animator(nextPayload).fadeIn(function(){
+                setTimeout(function(){
+                    Animator(hidden).scaleDown({multiplier: 1.5, rate: 0.08, delay: 30});
+                    Animator(hidden).fadeIn({ delay: 5})
+                }, 150);
+            })
+        }, 400)
         })
-    }, 400)
-    })
+    }
 
 </script>
