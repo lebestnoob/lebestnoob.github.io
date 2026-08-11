@@ -285,7 +285,8 @@ function fetchContent(url, callback) {
             try {
                 req = new ActiveXObject('Microsoft.XMLHTTP');
             } catch(e2) {
-                return alert("XHR is not supported on your browser.");
+                alert("XHR is not supported on your browser. Your experience may be degraded.");
+                return window.location.href = "/legacy.html";
             }
         }
     }
