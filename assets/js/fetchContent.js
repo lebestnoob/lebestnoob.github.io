@@ -34,6 +34,7 @@ var Utils = {
     }
 }
 
+//#region Router
 window.onload = function() { 
     loadTemplate();
 }
@@ -162,7 +163,6 @@ function loadContent() {
 
 }
 
-
 var Router = {
     updateHeader: function (currentHash) {
         var headerElm = document.getElementById ? document.getElementById("header") : document.all["header"];
@@ -215,6 +215,7 @@ var Router = {
         }
     }
 }
+//#endregion
 
 function mdtoHTML(str) {
     // Regex from https://gist.github.com/elfefe/ef08e583e276e7617cd316ba2382fc40
@@ -393,6 +394,7 @@ function mdtoHTML(str) {
     return str;
 }
 
+//#region Animations
 function Animator(element) {
     if(!element || (typeof element != "object" && element.nodeType !== 1))
         return alert("Animator(), Input is not an HTML Element!");
@@ -559,8 +561,9 @@ Animator.prototype.scaleDown = function(arg, callback){
         size -= Math.round(size * params.rate);
     }, params.delay);
 }
+//#endregion
 
-// Polyfills
+//#region Polyfills
 if (!String.prototype.startsWith) {
     String.prototype.startsWith = function(searchString, position){
       position = position || 0;
@@ -574,3 +577,4 @@ if (!String.prototype.endsWith) {
         return this.substr(strtLength - searchString.length, strtLength) === searchString;
   };
 }
+//#endregion
