@@ -29,7 +29,7 @@
     Animator(fontChanger).cycleFonts({timeout: 3500});
     Animator(fontChanger).cycleDecorations({timeout: 4200});
     
-    if(isIE() >= 8) {
+    if(Utils.isIE() >= 8) {
         var reveal = document.getElementById("reveal");
         reveal.style.opacity = 0;
         reveal.style.filter = 'alpha(opacity=0)';
