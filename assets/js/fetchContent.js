@@ -31,6 +31,183 @@ var Utils = {
         
         var myNav = navigator.userAgent.toLowerCase();
         return (myNav.indexOf('msie') != -1) ? parseInt(myNav.split('msie')[1]) : false;
+    },
+
+    parseMarkdown: function(str) {
+        // Regex from https://gist.github.com/elfefe/ef08e583e276e7617cd316ba2382fc40
+        var headerRegex = /^(#{1,6})\s+(.+)$/gm;
+        var boldRegex = /\*\*(.+?)\*\*|__(.+?)__/gm;
+        var italicRegex = /\*(.+?)\*|_(.+?)_/gm;
+        var strikeThroughRegex = /~~(.+?)~~/gm;
+        var linkRegex = /\[(.*?)\]\((.*?)\s?(?:"(.*?)")?\)/gm;
+        var imageRegex = /!\[(.*?)\]\((.*?)\s?(?:"(.*?)")?\)/gm;
+        var codeBlockRegex = /^\`\`\`(?:\s*(\w+))?([\s\S]*?)^\`\`\`$/gm;
+        var codeRegex = /`(.+?)`/gm;
+
+        var blockQuoteRegex = /^>\s*(.+)$/gm; // single-level quotes only
+        var unorderedListRegex = /^(\s*)[-+*]\s+(.+)$/gm;
+        var orderedListRegex = /^(\s*)(\d)+\.\s+(.+)$/gm;
+        
+        var emphasisRegex = /\*\*\*(.+?)\*\*\*|___(.+?)___/gm;
+        var paragraphRegex = /^([^#].*)|\n{2,}/g;
+        var horizontalLineRegex = /\n?(?:-{3,}|\*{3,}|_{3,})\n/g;
+        
+        str = str.replace(emphasisRegex, function(match, p1){
+            return "<em><strong>"+p1+"</strong></em>";
+        })
+
+        str = str.replace(horizontalLineRegex, function(match,p1,p2){
+            return "<hr />";
+        })
+
+        str = str.replace(codeBlockRegex, function(match,p1,p2){
+            return "<pre><code>" + p1 + p2 + "</code></pre>";
+        })
+
+        str = str.replace(blockQuoteRegex, function(match,p1) {
+            if(match.substr(1, match.length).startsWith(">")) {
+                var arr = match.split(">")
+                var layer = 0
+                var str = "";
+                while(!arr[layer]){
+                    layer++;
+                }
+                for(var m = 0; m < layer; m++) {
+                str += "<blockquote>"
+                }
+                
+                str += "<blockquote><p>" + arr[layer] + "</p></blockquote>"
+
+                for(var m = 0; m < layer; m++) {
+                    str += "</blockquote>"
+                }
+                
+            }
+            return str || "<blockquote><p>" + p1 + "</p></blockquote>";
+        })
+
+        str = str.replace(/<\/blockquote>\s<blockquote>/g, "")
+
+        function nestedElements(target) {
+            var child = (target == "ul" || target == "ol") ? "li" : "p";
+            var depth = [];
+
+            var regex;
+            if (target == "ol") {
+                regex = orderedListRegex;
+            } else if (target == "ul") {
+                regex = unorderedListRegex
+            } else {
+                regex = blockQuoteRegex;
+            }
+            
+            var index = 0;
+            var first = 0;
+            str = str.replace(regex, function(match, p1, p2, p3) {
+                
+                if(target == "ol" && (match.startsWith("\n1.") || match.startsWith("1. ")))
+                    index++;
+
+                depth[depth.length] = { depth: p1.length, content: typeof p3 === "string" ? p3 : p2, index:index };
+                
+                depth[0].depth = 0;
+                var placeholder = "{REPLACEME"+target+index+"}\n";
+                
+                if(target == "ul" && str.indexOf(match + "\n\n"))
+                    index++;
+
+                return placeholder;
+            })
+
+            for (var i = 0; i <= index; i++) {
+                var currentDepth = -1;
+                var ol="";
+                
+                // .filter();
+                var currentGroup = [];
+                for (var d = 0; d < depth.length; d++) {
+                    if (depth[d].index === i) {
+                        currentGroup[currentGroup.length] = depth[d];
+                    }
+                }
+                
+                for(var m = 0; m< currentGroup.length; m++){
+                        while(currentDepth < currentGroup[m].depth) {
+                            ol += "<"+target+">"
+                            currentDepth++;
+                        }
+
+                        while(currentDepth > currentGroup[m].depth) {
+                            ol += "</"+target+">"
+                            currentDepth--;
+                        }
+
+                        ol += "<"+child+">" + currentGroup[m].content + "</"+child+">";
+                    }
+
+                while (currentDepth >= 0){
+                    ol += "</"+target+">";
+                    currentDepth--;
+                } 
+
+                var regexp = new RegExp("{REPLACEME" + target + i + "}\n")
+                var regexpg = new RegExp("{REPLACEME" + target + i + "}\n", "g")
+
+                str = str.replace(regexp, ol);
+                str = str.replace(regexpg, function (match, p1){
+                    return "";
+                });
+            }
+        }
+
+        nestedElements("ul")
+        nestedElements("ol")
+
+        var chunks = str.split(paragraphRegex);
+        var processedArr = [];
+        for(var l=0; l<chunks.length; l++){
+            if(typeof chunks[l] == "undefined" || chunks[l] == ""){
+                continue;
+            }
+            if(chunks[l].startsWith("#") || chunks[l].startsWith("<blockquote>") ) {
+                processedArr[processedArr.length] = chunks[l];
+                continue;
+            }
+            processedArr[processedArr.length] = "<p>" + chunks[l] + "</p>";
+        }
+        str = processedArr.join("\n\n");
+
+        str = str.replace(headerRegex, function(match, p1, p2){
+            return "\n<h"+p1.length+">"+p2+"</h"+p1.length+">";
+        })
+        
+        // in line
+
+        str = str.replace(boldRegex, function(match, p1){
+            return "<strong>"+p1+"</strong>";
+        })
+        
+        str = str.replace(italicRegex, function(match, p1){
+            return "<em>"+p1+"</em>";
+        })
+        
+        str = str.replace(strikeThroughRegex, function(match, p1){
+            return "<s>"+p1+"</s>";
+        })
+
+        str = str.replace(imageRegex, function(match, p1, p2){
+            return "<img src=\""+ p2 +"\" alt=\"" + p1 + "\">";
+        })
+        
+        str = str.replace(linkRegex, function(match, p1, p2){
+            return "<a href=\"" + p2 + "\">" + p1 + "</a>";
+        })
+
+        str = str.replace(codeRegex, function(match,p1,p2){
+            return "<code>" + p1 + "</code>";
+        })
+
+        return str;
     }
 }
 
@@ -137,7 +314,7 @@ function loadContent() {
     fetchContent("/pages/" + path, function(pageResult) {
         var result = pageResult;
         if (path.endsWith(".md"))
-            result = mdtoHTML(pageResult)
+            result = Utils.parseMarkdown(pageResult);
     
         main.innerHTML = result;
         
@@ -216,183 +393,6 @@ var Router = {
     }
 }
 //#endregion
-
-function mdtoHTML(str) {
-    // Regex from https://gist.github.com/elfefe/ef08e583e276e7617cd316ba2382fc40
-    var headerRegex = /^(#{1,6})\s+(.+)$/gm;
-    var boldRegex = /\*\*(.+?)\*\*|__(.+?)__/gm;
-    var italicRegex = /\*(.+?)\*|_(.+?)_/gm;
-    var strikeThroughRegex = /~~(.+?)~~/gm;
-    var linkRegex = /\[(.*?)\]\((.*?)\s?(?:"(.*?)")?\)/gm;
-    var imageRegex = /!\[(.*?)\]\((.*?)\s?(?:"(.*?)")?\)/gm;
-    var codeBlockRegex = /^\`\`\`(?:\s*(\w+))?([\s\S]*?)^\`\`\`$/gm;
-    var codeRegex = /`(.+?)`/gm;
-
-    var blockQuoteRegex = /^>\s*(.+)$/gm; // single-level quotes only
-    var unorderedListRegex = /^(\s*)[-+*]\s+(.+)$/gm;
-    var orderedListRegex = /^(\s*)(\d)+\.\s+(.+)$/gm;
-    
-    var emphasisRegex = /\*\*\*(.+?)\*\*\*|___(.+?)___/gm;
-    var paragraphRegex = /^([^#].*)|\n{2,}/g;
-    var horizontalLineRegex = /\n?(?:-{3,}|\*{3,}|_{3,})\n/g;
-    
-    str = str.replace(emphasisRegex, function(match, p1){
-        return "<em><strong>"+p1+"</strong></em>";
-    })
-
-    str = str.replace(horizontalLineRegex, function(match,p1,p2){
-        return "<hr />";
-    })
-
-    str = str.replace(codeBlockRegex, function(match,p1,p2){
-        return "<pre><code>" + p1 + p2 + "</code></pre>";
-    })
-
-    str = str.replace(blockQuoteRegex, function(match,p1) {
-        if(match.substr(1, match.length).startsWith(">")) {
-            var arr = match.split(">")
-            var layer = 0
-            var str = "";
-            while(!arr[layer]){
-                layer++;
-            }
-            for(var m = 0; m < layer; m++) {
-               str += "<blockquote>"
-            }
-            
-            str += "<blockquote><p>" + arr[layer] + "</p></blockquote>"
-
-            for(var m = 0; m < layer; m++) {
-                str += "</blockquote>"
-            }
-            
-        }
-        return str || "<blockquote><p>" + p1 + "</p></blockquote>";
-    })
-
-    str = str.replace(/<\/blockquote>\s<blockquote>/g, "")
-
-    function nestedElements(target) {
-        var child = (target == "ul" || target == "ol") ? "li" : "p";
-        var depth = [];
-
-        var regex;
-        if (target == "ol") {
-            regex = orderedListRegex;
-        } else if (target == "ul") {
-            regex = unorderedListRegex
-        } else {
-            regex = blockQuoteRegex;
-        }
-        
-        var index = 0;
-        var first = 0;
-        str = str.replace(regex, function(match, p1, p2, p3) {
-            
-            if(target == "ol" && (match.startsWith("\n1.") || match.startsWith("1. ")))
-                index++;
-
-            depth[depth.length] = { depth: p1.length, content: typeof p3 === "string" ? p3 : p2, index:index };
-            
-            depth[0].depth = 0;
-            var placeholder = "{REPLACEME"+target+index+"}\n";
-            
-            if(target == "ul" && str.indexOf(match + "\n\n"))
-                index++;
-
-            return placeholder;
-        })
-
-        for (var i = 0; i <= index; i++) {
-            var currentDepth = -1;
-            var ol="";
-            
-            // .filter();
-            var currentGroup = [];
-            for (var d = 0; d < depth.length; d++) {
-                if (depth[d].index === i) {
-                    currentGroup[currentGroup.length] = depth[d];
-                }
-            }
-            
-            for(var m = 0; m< currentGroup.length; m++){
-                    while(currentDepth < currentGroup[m].depth) {
-                        ol += "<"+target+">"
-                        currentDepth++;
-                    }
-
-                    while(currentDepth > currentGroup[m].depth) {
-                        ol += "</"+target+">"
-                        currentDepth--;
-                    }
-
-                    ol += "<"+child+">" + currentGroup[m].content + "</"+child+">";
-                }
-
-            while (currentDepth >= 0){
-                ol += "</"+target+">";
-                currentDepth--;
-            } 
-
-            var regexp = new RegExp("{REPLACEME" + target + i + "}\n")
-            var regexpg = new RegExp("{REPLACEME" + target + i + "}\n", "g")
-
-            str = str.replace(regexp, ol);
-            str = str.replace(regexpg, function (match, p1){
-                return "";
-            });
-        }
-    }
-
-    nestedElements("ul")
-    nestedElements("ol")
-
-    var chunks = str.split(paragraphRegex);
-    var processedArr = [];
-    for(var l=0; l<chunks.length; l++){
-        if(typeof chunks[l] == "undefined" || chunks[l] == ""){
-            continue;
-        }
-        if(chunks[l].startsWith("#") || chunks[l].startsWith("<blockquote>") ) {
-            processedArr[processedArr.length] = chunks[l];
-            continue;
-        }
-        processedArr[processedArr.length] = "<p>" + chunks[l] + "</p>";
-    }
-    str = processedArr.join("\n\n");
-
-     str = str.replace(headerRegex, function(match, p1, p2){
-        return "\n<h"+p1.length+">"+p2+"</h"+p1.length+">";
-    })
-    
-    // in line
-
-    str = str.replace(boldRegex, function(match, p1){
-        return "<strong>"+p1+"</strong>";
-    })
-    
-    str = str.replace(italicRegex, function(match, p1){
-        return "<em>"+p1+"</em>";
-    })
-    
-    str = str.replace(strikeThroughRegex, function(match, p1){
-        return "<s>"+p1+"</s>";
-    })
-
-    str = str.replace(imageRegex, function(match, p1, p2){
-        return "<img src=\""+ p2 +"\" alt=\"" + p1 + "\">";
-    })
-    
-    str = str.replace(linkRegex, function(match, p1, p2){
-        return "<a href=\"" + p2 + "\">" + p1 + "</a>";
-    })
-
-    str = str.replace(codeRegex, function(match,p1,p2){
-        return "<code>" + p1 + "</code>";
-    })
-
-    return str;
-}
 
 //#region Animations
 function Animator(element) {
