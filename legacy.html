@@ -4,33 +4,30 @@
 <head id="head">
     <title>lebestnoob</title>
     <style>
-        body {
+        html, body {
             margin: 0;
-            height: 100vh;
-            padding-left: 30px;
-            padding-right: 30px;
+            height: 100%;
+            padding-left: 15px;
+            padding-right: 15px;
             display: flex;
             flex-direction: column;
-            overflow-wrap: break-word;
-            background-color: rgb(251, 248, 247);
+            overflow:hidden;
+            background-color: white;
             color: black;
     }
     </style>
 </head>
+<frameset rows="85%,15%">
+        <frame src="/pages/index.html" noresize name="maincontent" frameborder="0" >
+        <frame src="/templates/footer.html" noresize name="footer" frameborder="0" >
+    </frameset>
 
 <body>
-   
-    <iframe src="/pages/index.html" style="border: none; padding: 0; margin: 0; width:100%; height:90%;  overflow:hidden" height="90%" width="100%" frameborder="0" >
-        <frameset rows="90%, 10%" noresize>
-                <frame src="/pages/index.html" name="resultwindow" frameborder="0"></frame>
-                <frame src="/templates/footer.html" name="resultwindow" frameborder="0">
-                    We're sorry, but your browser doesn't support embedding web content.
-                </frame>
-        </frameset>
-    </iframe>
+    <iframe src="/pages/index.html" style="padding: 0; margin: 0; overflow:hidden; display: block" scrolling="auto" height="85%" width="100%" border="0" frameborder="0"></iframe>
+    <noframes>
+        <h1>We're sorry, but your browser doesn't support embedding web content.</h1>
+    </noframes>
     
-    <iframe src="/templates/footer.html" style="border: none; padding: 0; margin: 0; width:100%; height:10%;  overflow:hidden" height="10%" width="100%" frameborder="0" ></iframe>
+    <iframe src="/templates/footer.html" style="padding: 0; margin: 0; overflow:hidden; display: block" scrolling="auto" height="15%" width="100%" border="0" frameborder="0"></iframe>
 </body>
-<script>
-</script>
 </html>
