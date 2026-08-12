@@ -1,0 +1,24 @@
+<script>
+    var href = window.parent.location.href;
+
+    function initArray() {
+        this.length = initArray.arguments.length
+        for (var i = 0; i < this.length; i++) 
+        this[i+1] = initArray.arguments[i]
+    }
+
+    var titles = new initArray("Home", "About", "Blog");
+    var hrefs = new initArray("/#", "/#about.html", "/#blog.html");
+    var properties = new initArray("left", "right", "right");
+
+    if(href.indexOf("/legacy.html") != -1) {
+        document.open();
+        for(var i = 1; i <= titles.length; i++) {
+            if(titles[i].indexOf("Blog") != -1)
+                continue;
+            document.write("<a href=\"" + "/pages/" + hrefs[i].substring(2) + "\" target=\"mainContent\">" + titles[i] + "</a>\n");
+        }
+        document.write("<br />\n<hr />");
+        document.close();
+    }
+</script>
