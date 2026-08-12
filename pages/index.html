@@ -29,17 +29,17 @@
         var fontChanger = document.getElementById("change-fonts");
         Animator(fontChanger).cycleFonts({timeout: 3500});
         Animator(fontChanger).cycleDecorations({timeout: 4200});
-
+        
         if(Utils.isIE() >= 8) {
             var reveal = document.getElementById("reveal");
             reveal.style.opacity = 0;
-            reveal.style.filter = 'alpha(opacity=0)';
+            reveal.style.filter = "alpha(opacity=0)";
             var nextPayload = document.getElementById("nextPayload");
             nextPayload.style.opacity = 0;
-            nextPayload.style.filter = 'alpha(opacity=0)';
+            nextPayload.style.filter = "alpha(opacity=0)";
             var hidden = document.getElementById("hidden");
             hidden.style.opacity = 0;
-            hidden.style.filter = 'alpha(opacity=0)';
+            hidden.style.filter = "alpha(opacity=0)";
 
             Animator(reveal).scaleDown({multiplier: 4, rate: 0.08, delay: 25});
             Animator(reveal).fadeIn(function(){

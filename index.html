@@ -11,9 +11,18 @@
     <div id="main">
         <noscript>
             <h1>We're sorry, but JavaScript is required for routing to work. Please enable it.</h1>
+            <p>If JavaScript is enabled, your browser may not support the required features.</p>
+            <p>Click<a href="/legacy.html">here</a> to be redirect to the legacy web page.</p>
+            <meta http-equiv="refresh" content="5; url=/legacy.html">
         </noscript>
     </div>
     <div id="footer"></div>
+<script>
+    if (!document.getElementById) {
+        alert("Redirecting to the legacy web page. Your experience may be degraded.")
+        window.location.href = "/legacy.html";
+    }
+</script>
 </body>
 
 </html>
