@@ -18,7 +18,7 @@
     </div>
     <div id="footer"></div>
 <script>
-    if (!document.getElementById) {
+    if (!document.getElementById || !document.all["main"]) {
         alert("Redirecting to the legacy web page. Your experience may be degraded.")
         window.location.href = "/legacy.html";
     }

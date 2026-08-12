@@ -208,6 +208,21 @@ var Utils = {
         })
 
         return str;
+    },
+    // IE's innerHTML parser strips out script tags when the DOM is still loading, asked an AI to write the regex
+    injectHtmlWithScripts: function(element, htmlString) {
+        var scriptRegex = /<script\b[^>]*>([\s\S]*?)<\/script>/gm;
+        var scripts = [];
+
+        var cleanHtml = htmlString.replace(scriptRegex, function(match, scriptContent) {
+            scripts[scripts.length] = scriptContent;
+            return "";
+        });
+
+        element.innerHTML = cleanHtml;
+
+        for (var i = 0; i < scripts.length; i++)
+            eval(scripts[i]);
     }
 }
 
@@ -265,11 +280,7 @@ function doTemplating(currentKey, result){
         else 
             html.innerHTML += result;
     } else {
-        html.innerHTML = result;
-        var scripts = html.getElementsByTagName("script");
-        for(var j=0; j<scripts.length; j++) {
-            eval(scripts[j].text)
-        }
+        Utils.injectHtmlWithScripts(html, result);
     }
 }
 
@@ -316,7 +327,7 @@ function loadContent() {
         var result = pageResult;
         if (path.endsWith(".md"))
             result = Utils.parseMarkdown(pageResult);
-    
+        
         main.innerHTML = result;
         
         document.title = (main.getElementsByTagName("h1")[0].innerText || main.getElementsByTagName("h1")[0].textContent) || siteConfiguration.title;
@@ -330,11 +341,8 @@ function loadContent() {
             head.appendChild(metaElm);
         }
         
-        var scripts = main.getElementsByTagName("script");
-        for(var i=0; i<scripts.length; i++) {
-            eval(scripts[i].text)
-        }
-        
+        Utils.injectHtmlWithScripts(main, result);
+
         document.title = document.title != siteConfiguration.title ? document.title + " - " + siteConfiguration.title : document.title;
         Animator(main).fadeIn({delay: 7});
     })
