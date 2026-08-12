@@ -1,8 +1,33 @@
-<a class="header left" href="/#">Home</a>
 
-<a class="header right" href="/#about.html">About</a>
+<span id="nav"></span>
+<script>
+    var href = window.parent.location.href;
 
-<a class="header right" href="/#blog.html">Blog&nbsp;</a>
+    function initArray() {
+        this.length = initArray.arguments.length
+        for (var i = 0; i < this.length; i++) 
+        this[i+1] = initArray.arguments[i]
+    }
 
-<br />
-<hr />
+    var titles = new initArray("Home", "About", "Blog");
+    var hrefs  = new initArray("/#",   "/#about.html", "/#blog.html");
+    var properties = new initArray("left", "right", "right");
+
+    if(href.indexOf("/legacy.html") != -1) {
+        document.open();
+        for(var i = 1; i <= titles.length; i++) {
+            if(titles[i].indexOf("Blog") != -1)
+                continue;
+            document.write("<a href=\"" + "/pages/" + hrefs[i].substring(2) + "\" target=\"mainContent\">" + titles[i] + "</a>\n");
+        }
+        document.write("<br />\n<hr />");
+        document.close();
+    } else {
+        var nav = document.getElementById("nav");
+        var str = "";
+        console.log(nav.outerHTML)
+        for(var i=1; i<=titles.length; i++)
+            str += "<a class=\"header " + properties[i] + "\" href=\"" + hrefs[i] + "\">" + titles[i] + "&nbsp;</a>\n\n";
+        nav.outerHTML = str + "<br />\n<hr />";
+    }
+</script>

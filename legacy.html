@@ -1,7 +1,6 @@
-<!doctype html>
 <html lang="en">
 
-<head id="head">
+<head>
     <title>lebestnoob</title>
     <style>
         html, body {
@@ -17,17 +16,22 @@
     }
     </style>
 </head>
-<frameset rows="85%,15%">
-        <frame src="/pages/index.html" noresize name="maincontent" frameborder="0" >
-        <frame src="/templates/footer.html" noresize name="footer" frameborder="0" >
-    </frameset>
 
-<body>
-    <iframe src="/pages/index.html" style="padding: 0; margin: 0; overflow:hidden; display: block" scrolling="auto" height="85%" width="100%" border="0" frameborder="0"></iframe>
-    <noframes>
-        <h1>We're sorry, but your browser doesn't support embedding web content.</h1>
-    </noframes>
-    
-    <iframe src="/templates/footer.html" style="padding: 0; margin: 0; overflow:hidden; display: block" scrolling="auto" height="15%" width="100%" border="0" frameborder="0"></iframe>
-</body>
+
+<frameset rows="12%,73%,15%">
+        <frame src="/templates/header.html" noresize name="header" frameborder="0" >
+        <frame src="/pages/index.html" noresize name="mainContent" frameborder="0" >
+        <frame src="/templates/footer.html" noresize name="footer" frameborder="0" >
+</frameset>
+
+<noframes>
+    <body>
+        <iframe src="/templates/header.html" name="header" style="padding: 0; margin: 0; overflow:hidden; display: block" scrolling="auto" height="12%" width="100%" border="0" frameborder="0"></iframe>
+        <iframe src="/pages/index.html" name="mainContent" style="padding: 0; margin: 0; overflow:hidden; display: block" scrolling="auto" height="73%" width="100%" border="0" frameborder="0"></iframe>
+            <h1>We're sorry, but your browser doesn't support embedding web content.</h1>
+            
+            <iframe src="/templates/footer.html" name="footer" style="padding: 0; margin: 0; overflow:hidden; display: block" scrolling="auto" height="15%" width="100%" border="0" frameborder="0"></iframe>
+    </body>
+</noframes>
+
 </html>
