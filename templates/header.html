@@ -25,7 +25,6 @@
         var nav = document.getElementById("nav");
         if(nav) {
             var str = "";
-            console.log(nav.outerHTML)
             for(var i=1; i<=titles.length; i++)
                 str += "<a class=\"header " + properties[i] + "\" href=\"" + hrefs[i] + "\">" + titles[i] + "&nbsp;</a>\n\n";
             nav.outerHTML = str + "<br />\n<hr />";
