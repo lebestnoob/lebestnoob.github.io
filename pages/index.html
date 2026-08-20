@@ -28,7 +28,7 @@
     if(typeof Animator == "function") {    
         var fontChanger = document.getElementById("change-fonts");
         Animator(fontChanger).cycleFonts({timeout: Utils.isIE() > 8 ? 3500 : 5500 });
-        Animator(fontChanger).cycleDecorations({timeout: Utils.isIE() > 8 ? 5200 : 5200});
+        Animator(fontChanger).cycleDecorations({timeout: Utils.isIE() > 8 ? 4200 : 6200});
         
         if(Utils.isIE() >= 8) {
             var reveal = document.getElementById("reveal");
