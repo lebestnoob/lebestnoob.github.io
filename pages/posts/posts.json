@@ -6,5 +6,13 @@
         "desc": "Very short and relevant description!", 
         "author": "lebestnoob", 
         "href": "hello-world.html"
+    },
+    {
+        "title": "Welcome to the Internet, Netscape!",
+        "date": "08/20/26",
+        "updated": null,
+        "desc": "Support for Netscape Navigator has been added!",
+        "author": "lebestnoob",
+        "href": "welcome-to-the-internet.md"
     }
 ]
